@@ -6,6 +6,7 @@ import com.example.codexe.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import com.example.codexe.dto.LoginRequest;
 import com.example.codexe.model.User;
 
 import org.springframework.http.HttpStatus;
@@ -27,11 +28,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
-    }
-
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody User user){
         try {
@@ -43,4 +39,17 @@ public class UserController {
             return new ResponseEntity<>("User could not be created", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest request){
+        User user = userService.validateCredentials(request.getUsername(), request.getPassword());
+        
+        return new ResponseEntity<String>("Login Successful", HttpStatus.OK);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
 }

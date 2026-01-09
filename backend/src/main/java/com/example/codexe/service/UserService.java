@@ -55,7 +55,6 @@ public class UserService {
             throw new CustomException("Invalid password", HttpStatus.UNAUTHORIZED);
         }
 
-        //return the user if valid
         return user;
     }
 }
