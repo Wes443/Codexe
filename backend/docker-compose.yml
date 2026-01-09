@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:9.4
+    container_name: typing_app_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 0000
+      MYSQL_DATABASE: typing_app
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 0000
+    ports:
+      - "3306:3306"  # maps host port 3306 to container port 3306
+    volumes:
+      - mysql_data:/var/lib/mysql  # persists database data
+
+volumes:
+  mysql_data:
