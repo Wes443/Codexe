@@ -46,8 +46,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        //only allow requests from localhost:3000 (frontend)
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        //only allow requests from localhost:5173 (frontend)
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
         //allowed response methods
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         //allow all headers

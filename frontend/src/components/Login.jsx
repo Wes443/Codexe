@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { loginUser } from '../services/userServices';
+import { loginUser } from '../services/userServices'
 
-function Login({ onLoginSuccess }) {
+function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -9,20 +9,24 @@ function Login({ onLoginSuccess }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            const user = await loginUser({username, password});
-            onLoginSuccess(user);
+            const message = await loginUser({ username, password });
+            setMessage(message);
 
-        }catch (error){
-            setMessage("Login Failed");
+        } catch(error){
+            if (error.response && error.response.data) {
+                setMessage(error.response.data);
+            } else {
+                setMessage("Server unreachable");
+            }
         }
-    };
+    }
 
     return (
         <form onSubmit={handleSubmit}>
             <input value={username} onChange={(e) => setUsername(e.target.value)} />
             <input value={password} onChange={(e) => setPassword(e.target.value)} />
             <button type="submit">Login</button>
-            {message && <p>{message}</p>}
+            <p>{message}</p>
         </form>
     );
 }

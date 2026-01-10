@@ -57,4 +57,8 @@ public class UserService {
 
         return user;
     }
+
+    public long count(){
+        return userDao.count();
+    }
 }

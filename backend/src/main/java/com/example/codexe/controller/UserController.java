@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -41,8 +42,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request){
-        User user = userService.validateCredentials(request.getUsername(), request.getPassword());
+    public ResponseEntity<String> login(@RequestBody LoginRequest credentials){
+        User user = userService.validateCredentials(credentials.getUsername(), credentials.getPassword());
         
         return new ResponseEntity<String>("Login Successful", HttpStatus.OK);
     }
