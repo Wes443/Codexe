@@ -7,20 +7,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Data
 @Table(name="users")
 public class User {
+    //generate UUID automatically
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id", columnDefinition = "BINARY(16)", nullable = false, updatable = false)
@@ -44,6 +41,7 @@ public class User {
     @Column(name = "total_sessions")
     private int totalSessions;
 
+    //constructor 
     public User(String email, String username, String passwordHash, int highestWPM, int averageWPM, int totalSessions) {
         this.email = email;
         this.username = username;
@@ -51,5 +49,10 @@ public class User {
         this.highestWPM = highestWPM;
         this.averageWPM = averageWPM;
         this.totalSessions = totalSessions;
+    }
+
+    //overload constructor
+    public User(String email, String username, String passwordHash){
+        this(email, username, passwordHash, 0, 0, 0);
     }
 }
