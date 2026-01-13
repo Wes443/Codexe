@@ -32,11 +32,11 @@ public class UserController {
 
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody UserRequest request){
-        // //create new user object
-        // User user = new User(request.getEmail(), request.getUsername(), request.getPassword());
-        // //call user service 
-        // userService.createUser(user);
-        return new ResponseEntity<String>("User created successfully", HttpStatus.CONFLICT);
+        //create new user object
+        User user = new User(request.getEmail(), request.getUsername(), request.getPassword());
+        //call user service 
+        userService.createUser(user);
+        return new ResponseEntity<>("User created successfully", HttpStatus.OK);
     }
 
     @PostMapping("/login")

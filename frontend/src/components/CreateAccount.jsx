@@ -31,8 +31,8 @@ function CreateAccount() {
             setMessage("Account created! Please log in.")
 
         }catch(error){
-            if (error.response && error.response.message) {
-                setMessage(error.response.data.message);
+            if (error.response && error.response.data) {
+                setMessage(error.response.data);
             } else {
                 setMessage("Server Unreachable");
             }

@@ -1,7 +1,6 @@
 package com.example.codexe.service;
 import java.util.List;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,25 +41,28 @@ public class UserService {
         try {
             //encode user's password
             String encryptedPassword = passwordEncoder.encode(user.getPasswordHash());
+
             //store the encoded password in the database
             user.setPasswordHash(encryptedPassword);
-            //update the database
 
             User savedUser = userDao.save(user);
             userDao.flush();
+
             return savedUser;
 
         } catch (DataIntegrityViolationException e){
-            // Throwable ex = e.getMostSpecificCause();
-            // String message = ex.getMessage();
+            Throwable ex = e.getMostSpecificCause();
+            String message = ex.getMessage();
             
-            // if (message != null && message.contains("users.email")){
-            //     throw new CustomException("An Account With This Email Aready Exists", HttpStatus.CONFLICT);
-            // }
-
-            // if (message != null && message.contains("users.username")){
-            //     throw new CustomException("Username Already In Use", HttpStatus.CONFLICT);
-            // }
+            //if the error is from a duplicate email
+            if (message != null && message.contains("users.email")){
+                throw new CustomException("An Account With This Email Aready Exists", HttpStatus.CONFLICT);
+            }
+            
+            //if the error is from a duplicate username
+            if (message != null && message.contains("users.username")){
+                throw new CustomException("Username Already In Use", HttpStatus.CONFLICT);
+            }
             
             //generic exception in case of unknown error
             throw new CustomException("An Unexpected Error Occured", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -20,7 +20,7 @@ function Login({ onLoginSuccess }) {
             onLoginSuccess(user);
 
         } catch(error){
-            if (error.response && error.response.message) {
+            if (error.response) {
                 setMessage("Login Failed");
             } else {
                 setMessage("Server Unreachable");
