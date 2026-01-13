@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="users")
+@Table(name ="users")
 public class User {
     //generate UUID automatically
     @Id
@@ -27,10 +28,10 @@ public class User {
     @Column(name = "user_id", columnDefinition = "BINARY(16)", nullable = false, updatable = false)
     private UUID userId;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique=true)
     private String email;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique=true)
     private String username;
 
     @Column(name = "password_hash", nullable = false)

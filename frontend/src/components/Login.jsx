@@ -20,13 +20,13 @@ function Login({ onLoginSuccess }) {
             onLoginSuccess(user);
 
         } catch(error){
-            if (error.response) {
+            if (error.response && error.response.message) {
                 setMessage("Login Failed");
             } else {
                 setMessage("Server Unreachable");
             }
         }
-    }
+    };
     
     return (
         <form onSubmit={handleLogin}>
@@ -44,7 +44,7 @@ function Login({ onLoginSuccess }) {
             <div>
                 <label>Password</label>
                 <input 
-                    type="text"
+                    type="password"
                     name="password"
                     placeholder="*required"
                     value={password} 

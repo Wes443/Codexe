@@ -7,6 +7,7 @@ import com.example.codexe.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 import com.example.codexe.dto.LoginRequest;
+import com.example.codexe.dto.UserRequest;
 import com.example.codexe.model.User;
 
 import org.springframework.http.HttpStatus;
@@ -30,30 +31,23 @@ public class UserController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestParam String email, @RequestParam String username, @RequestParam String password){
-        try {
-            //create new user object
-            User user = new User(email, username, password);
-            //call user service 
-            userService.createUser(user);
-            log.info("User created successfully");
-            return new ResponseEntity<>("User created successfully", HttpStatus.OK);
-        } catch (Exception e){
-            log.error("user could not be created", e);
-            return new ResponseEntity<>("User could not be created", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> createUser(@RequestBody UserRequest request){
+        // //create new user object
+        // User user = new User(request.getEmail(), request.getUsername(), request.getPassword());
+        // //call user service 
+        // userService.createUser(user);
+        return new ResponseEntity<String>("User created successfully", HttpStatus.CONFLICT);
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequest credentials){
         User user = userService.validateCredentials(credentials.getUsername(), credentials.getPassword());
-        
+
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
-            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
-
 }

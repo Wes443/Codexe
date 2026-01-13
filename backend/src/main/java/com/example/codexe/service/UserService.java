@@ -1,6 +1,8 @@
 package com.example.codexe.service;
 import java.util.List;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,14 +37,34 @@ public class UserService {
     }
 
     //call user dao and add a new user to the database
-    @Transactional(rollbackFor = CustomException.class)
+    @Transactional
     public User createUser(User user) {
-        //encode user's password
-        String encryptedPassword = passwordEncoder.encode(user.getPasswordHash());
-        //store the encoded password in the database
-        user.setPasswordHash(encryptedPassword);
-        //update the database
-        return userDao.save(user);
+        try {
+            //encode user's password
+            String encryptedPassword = passwordEncoder.encode(user.getPasswordHash());
+            //store the encoded password in the database
+            user.setPasswordHash(encryptedPassword);
+            //update the database
+
+            User savedUser = userDao.save(user);
+            userDao.flush();
+            return savedUser;
+
+        } catch (DataIntegrityViolationException e){
+            // Throwable ex = e.getMostSpecificCause();
+            // String message = ex.getMessage();
+            
+            // if (message != null && message.contains("users.email")){
+            //     throw new CustomException("An Account With This Email Aready Exists", HttpStatus.CONFLICT);
+            // }
+
+            // if (message != null && message.contains("users.username")){
+            //     throw new CustomException("Username Already In Use", HttpStatus.CONFLICT);
+            // }
+            
+            //generic exception in case of unknown error
+            throw new CustomException("An Unexpected Error Occured", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //validate the user's credentials
@@ -58,7 +80,4 @@ public class UserService {
         return user;
     }
 
-    public long count(){
-        return userDao.count();
-    }
 }
