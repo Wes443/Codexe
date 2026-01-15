@@ -29,4 +29,17 @@ CREATE TABLE sessions (
 
     INDEX idx_user_id (user_id),
     INDEX idx_user_date (user_id, date_achieved)
-)
+);
+
+-- create refresh token table --
+CREATE TABLE refresh_tokens (
+    token_id BINARY(16) PRIMARY KEY,
+    user_id BINARY(16),
+    token VARCHAR(512) NOT NULL UNIQUE,
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE,
+
+    CONSTRAINT fk_refresh_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
