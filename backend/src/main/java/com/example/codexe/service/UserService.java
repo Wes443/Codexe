@@ -1,5 +1,6 @@
 package com.example.codexe.service;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,11 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserByUsername(String username){
         return userDao.findByUsername(username).orElseThrow(() -> new CustomException("Username not found", HttpStatus.NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserById(UUID userId) {
+        return userDao.findById(userId).orElseThrow(() -> new CustomException("Username not found", HttpStatus.NOT_FOUND));
     }
 
     //call user dao and add a new user to the database

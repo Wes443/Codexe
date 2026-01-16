@@ -1,13 +1,10 @@
-package com.example.codexe.utils;
+package com.example.codexe.security;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,11 +20,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter{
-    
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final AccessTokenService accessTokenService;
 
-    public JwtAuthFilter(UserDetailsService userDetailsService, AccessTokenService accessTokenService){
+    //constructor
+    public JwtAuthFilter(CustomUserDetailsService userDetailsService, AccessTokenService accessTokenService){
         this.userDetailsService = userDetailsService;
         this.accessTokenService = accessTokenService;
     }
@@ -52,10 +49,10 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             Claims claim = accessTokenService.validateAccessToken(token);
 
             //get the userId from the claim
-            UUID userId = UUID.fromString(claim.getSubject());
+            String userId = claim.getSubject();
 
             //get the user's detail
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userId.toString());
+            CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userId);
 
             //create authentication object
             UsernamePasswordAuthenticationToken authentication =
@@ -73,8 +70,9 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }catch(JwtException | IllegalArgumentException e){
-            //throw exception if the access token is invalid
-            throw new CustomException("Invalid or Expired Access Token", HttpStatus.UNAUTHORIZED);
+            //set http status as 401 (unauthorized)
+            response.setStatus(401);
+            return;
         }
 
         //continue filtering requests
