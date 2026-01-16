@@ -15,7 +15,7 @@ import com.example.codexe.utils.CustomException;
 
 @Service
 public class RefreshTokenService {
-    //get the refresh token duration from the application properties
+    //get the refresh token duration from the application properties (30 days)
     @Value("${jwt.refresh.expiration-ms}")
     private long refreshTokenDuration;
 
