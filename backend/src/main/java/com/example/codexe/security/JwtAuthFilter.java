@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.codexe.service.AccessTokenService;
+import com.example.codexe.utils.CustomException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -69,7 +70,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             //set authentication in security context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        }catch(JwtException | IllegalArgumentException e){
+        }catch(JwtException | IllegalArgumentException | CustomException e){
             //set http status as 401 (unauthorized)
             response.setStatus(401);
             return;

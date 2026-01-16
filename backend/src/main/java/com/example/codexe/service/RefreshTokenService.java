@@ -4,27 +4,26 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.codexe.dao.RefreshTokenDao;
 import com.example.codexe.model.RefreshToken;
 import com.example.codexe.model.User;
+import com.example.codexe.security.JwtProperties;
 import com.example.codexe.utils.CustomException;
 
 @Service
 public class RefreshTokenService {
-    //get the refresh token duration from the application properties (30 days)
-    @Value("${jwt.refresh.expiration-ms}")
-    private long refreshTokenDuration;
+    private JwtProperties jwtProperties;
 
     //refresh token data access object (dao)
     private RefreshTokenDao refreshTokenDao;
 
     //constructor
-    public RefreshTokenService(RefreshTokenDao refreshTokenDao){
+    public RefreshTokenService(JwtProperties jwtProperties, RefreshTokenDao refreshTokenDao){
         this.refreshTokenDao = refreshTokenDao;
+        this.jwtProperties = jwtProperties;
     }
 
     //manually create new refresh token 
@@ -36,7 +35,7 @@ public class RefreshTokenService {
         //set the token string
         token.setToken(generateRefreshToken());
         //set the expiration date of the token
-        token.setExpiresAt(Instant.now().plusMillis(refreshTokenDuration));
+        token.setExpiresAt(Instant.now().plusMillis(jwtProperties.getRefreshExpirationMs()));
         //save token to database
         return refreshTokenDao.save(token);
     }
@@ -50,7 +49,7 @@ public class RefreshTokenService {
         //set the token string
         token.setToken(generateRefreshToken());
         //set the expiration date of the token
-        token.setExpiresAt(Instant.now().plusMillis(refreshTokenDuration));
+        token.setExpiresAt(Instant.now().plusMillis(jwtProperties.getRefreshExpirationMs()));
         //delete the old refresh token from the database
         refreshTokenDao.delete(oldRefreshToken);
         //save the new token to the database

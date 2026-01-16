@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.codexe.model.User;
+import com.example.codexe.security.JwtProperties;
 import com.example.codexe.utils.CustomException;
 
 import io.jsonwebtoken.Claims;
@@ -21,16 +22,15 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class AccessTokenService {
-    //get the access token duration from the application properties (15 min)
-    @Value("{jwt.access.expiration-ms}")
-    private long accessTokenDuration;
-
+    private final JwtProperties jwtProperties;
     private final Key signingKey;
 
     //constructor
-    public AccessTokenService(@Value("${jwt.access.secret}") String secretKey) {
+    public AccessTokenService(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+
         //convert the String into a Key object
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+        byte[] keyBytes = Base64.getDecoder().decode(this.jwtProperties.getAccessSecret());
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -39,7 +39,7 @@ public class AccessTokenService {
         return Jwts.builder()
             .setSubject(user.getUserId().toString())
             .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plusMillis(accessTokenDuration)))
+            .setExpiration(Date.from(Instant.now().plusMillis(jwtProperties.getAccessExpirationMs())))
             .signWith(signingKey, SignatureAlgorithm.HS256)
             .compact();
     }
