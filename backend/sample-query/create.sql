@@ -36,7 +36,7 @@ CREATE TABLE refresh_tokens (
     token_id BINARY(16) PRIMARY KEY,
     user_id BINARY(16),
     token VARCHAR(512) NOT NULL UNIQUE,
-    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    issued_at TIMESTAMP NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     revoked BOOLEAN DEFAULT FALSE,
 

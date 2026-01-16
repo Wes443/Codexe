@@ -9,5 +9,4 @@ public class CodexeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CodexeApplication.class, args);
 	}
-
 }

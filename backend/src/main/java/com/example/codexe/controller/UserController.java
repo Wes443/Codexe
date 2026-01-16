@@ -9,10 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import com.example.codexe.dto.LoginRequest;
 import com.example.codexe.dto.UserRequest;
 import com.example.codexe.model.User;
+import com.example.codexe.security.CustomUserDetails;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,20 +41,14 @@ public class UserController {
         return new ResponseEntity<>("User created successfully", HttpStatus.OK);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest credentials){
-        User user = userService.validateCredentials(credentials.getUsername(), credentials.getPassword());
-        return new ResponseEntity<User>(user, HttpStatus.OK);
-    }
-
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/me")
-    public String getMethodName(Authentication authentication) {
-        return authentication.getName();
+    public String getUsername(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return userDetails.getUsername();
     }
     
 }

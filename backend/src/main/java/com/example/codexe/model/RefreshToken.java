@@ -37,25 +37,21 @@ public class RefreshToken {
     @Column(nullable = false, unique = true, length = 512)
     private String token;
 
-    @Column(
-        name = "issued_at",
-        nullable = false,
-        updatable = false,
-        insertable = false
-    )
+    @Column(name = "issued_at", nullable = false)
     private Instant issuedAt;
 
-    @Column(name = "exipres_at", nullable = false)
+    @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
 
     @Column(nullable = false)
     private boolean revoked;
     
     //constructor
-    public RefreshToken(User user, String token, Instant expiresAt) {
+    public RefreshToken(User user, String token, Instant issuedAt, Instant expiresAt) {
         this.user = user;
         this.token = token;
         this.expiresAt = expiresAt;
+        this.issuedAt = issuedAt;
         this.revoked = false; // default
     }
 }

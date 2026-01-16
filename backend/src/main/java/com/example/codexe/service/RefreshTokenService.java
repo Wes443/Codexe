@@ -34,8 +34,12 @@ public class RefreshTokenService {
         token.setUser(user);
         //set the token string
         token.setToken(generateRefreshToken());
+        //get the current instant
+        Instant now = Instant.now();
+        //set the current issued time
+        token.setIssuedAt(now);
         //set the expiration date of the token
-        token.setExpiresAt(Instant.now().plusMillis(jwtProperties.getRefreshExpirationMs()));
+        token.setExpiresAt(now.plusMillis(jwtProperties.getRefreshExpirationMs()));
         //save token to database
         return refreshTokenDao.save(token);
     }
