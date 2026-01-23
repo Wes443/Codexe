@@ -3,6 +3,7 @@ package com.example.codexe.service;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -60,24 +61,37 @@ public class RefreshTokenService {
         return refreshTokenDao.save(token);
     }
 
-    //check to see if the refresh token is still vaid
-    public RefreshToken validateRefreshToken(RefreshToken refreshToken){
-        //check if the refresh token is revoked or expired
-        if(refreshToken.getExpiresAt().isBefore(Instant.now()) || refreshToken.isRevoked()){
-            //delete the refresh token from the datbase
-            refreshTokenDao.delete(refreshToken);
-            //throw custom exception (the user has to login again)
-            throw new CustomException("Invalid Refresh Token", HttpStatus.UNAUTHORIZED);
-        }
-
-        //return the refresh token if it's still valid
-        return refreshToken;
-    }
-
     //generate refresh token string using random bytes
     private String generateRefreshToken() {
         byte[] randomBytes = new byte[64];
         new SecureRandom().nextBytes(randomBytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
+    //return the refresh token object based on the token string
+    public RefreshToken getRefreshTokenById(String token){
+        //get the refresh token object based on the token id
+        RefreshToken refreshToken = refreshTokenDao.findByToken(token)
+        //throw exception if the refresh token doesn't exist
+        .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
+        //if the refresh token is expired
+        if(refreshToken.getExpiresAt().isBefore(Instant.now())){
+            //delete it from the database
+            refreshTokenDao.delete(refreshToken);
+            //throw an exception
+            throw new CustomException("Expird Refresh Token", HttpStatus.UNAUTHORIZED);
+        }
+        //rotate the old refresh token and return the new one
+        return rotateRefreshToken(refreshToken);
+    }
+
+    //remove the refresh token from the database 
+    public void deleteRefreshTokenById(String token){
+        //get the refresh token object based on the token id
+        RefreshToken refreshToken = refreshTokenDao.findByToken(token)
+        //throw exception if the refresh token doesn't exist
+        .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
+        //remove the refresh token from the database
+        refreshTokenDao.delete(refreshToken);
     }
 }

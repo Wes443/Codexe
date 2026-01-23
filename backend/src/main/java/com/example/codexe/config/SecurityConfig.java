@@ -62,7 +62,7 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         //allow all headers
         config.setAllowedHeaders(List.of("*"));
-        //allow credentials
+        //allow server to accept cookies (for jwt tokens)
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
