@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class JwtProperties {
     private long accessExpirationMs;
     private long refreshExpirationMs;
+    private long refreshCookieExpirationS;
     private String accessSecret;
 
     //getter methods
@@ -17,6 +18,10 @@ public class JwtProperties {
 
     public long getRefreshExpirationMs(){
         return refreshExpirationMs;
+    }
+
+    public long getRefreshCookieExpirationS(){
+        return refreshCookieExpirationS;
     }
 
     public String getAccessSecret(){
@@ -34,5 +39,9 @@ public class JwtProperties {
 
     public void setAccessSecret(String accessSecret){
         this.accessSecret = accessSecret;
+    }
+
+    public void setRefreshCookieExpirationS(long refreshCookieExpirationS){
+        this.refreshCookieExpirationS = refreshCookieExpirationS;
     }
 }
