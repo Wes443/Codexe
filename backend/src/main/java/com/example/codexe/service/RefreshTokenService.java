@@ -3,7 +3,6 @@ package com.example.codexe.service;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import com.example.codexe.utils.CustomException;
 
 @Service
 public class RefreshTokenService {
+    //jwt properties object
     private JwtProperties jwtProperties;
 
     //refresh token data access object (dao)
