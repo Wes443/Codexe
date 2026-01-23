@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestBody UserRequest request, HttpServletResponse response){
+    public ResponseEntity<String> createUser(@RequestBody UserRequest request){
         //create new user object
         User user = new User(request.getEmail(), request.getUsername(), request.getPassword());
         //call user service 
@@ -46,7 +46,7 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest credentials){
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest credentials, HttpServletResponse response){
         //get user based on credentials
         User user = userService.validateCredentials(credentials.getUsername(), credentials.getPassword());
         //generate access token
@@ -54,8 +54,12 @@ public class AuthController {
         //generate refresh token object and get the token string
         String refreshToken = refreshTokenService.createRefreshToken(user).getToken();
         //generate a http-cookie for the refresh token
-        ResponseCookie refreshTokenCookie = CookieUtil.buildCookie("refresh-token", refreshToken, 0);
+        ResponseCookie refreshTokenCookie = CookieUtil.buildCookie("refresh-token", refreshToken, jwtProperties.getRefreshCookieExpirationS());
+        //add the cookie to the response header 
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
         //return login response object
-        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
+        return ResponseEntity.ok(new LoginResponse(accessToken));
     }
+
+    
 }
