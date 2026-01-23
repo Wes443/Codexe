@@ -6,7 +6,6 @@ import com.example.codexe.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.example.codexe.dto.UserRequest;
 import com.example.codexe.model.User;
 import com.example.codexe.security.CustomUserDetails;
 
@@ -14,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -28,15 +25,6 @@ public class UserController {
     //constructor
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestBody UserRequest request){
-        //create new user object
-        User user = new User(request.getEmail(), request.getUsername(), request.getPassword());
-        //call user service 
-        userService.createUser(user);
-        return new ResponseEntity<>("User created successfully", HttpStatus.OK);
     }
 
     @GetMapping("/users")
