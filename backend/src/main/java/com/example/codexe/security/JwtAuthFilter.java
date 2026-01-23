@@ -1,7 +1,6 @@
 package com.example.codexe.security;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,7 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         //extract the header
         String header = request.getHeader("Authorization");
 
-        //if the request doesn't require authorization
+        //if the request doesn't require authorization or empty header
         if (header == null || !header.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
@@ -46,13 +45,13 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         String token = header.substring(7);
 
         try{
-            //validate the access token
+            //validate the access token and the get the claim
             Claims claim = accessTokenService.validateAccessToken(token);
 
             //get the userId from the claim
             String userId = claim.getSubject();
 
-            //get the user's detail
+            //UserDetail object based on userId
             CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userId);
 
             //create authentication object
@@ -63,11 +62,12 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                         userDetails.getAuthorities()
                 );
 
+            //set authentication details
             authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
             );
 
-            //set authentication in security context
+            //set the request as authenticated 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }catch(JwtException | IllegalArgumentException | CustomException e){

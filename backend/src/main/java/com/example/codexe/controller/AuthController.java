@@ -33,7 +33,7 @@ public class AuthController {
         User user = userService.validateCredentials(credentials.getUsername(), credentials.getPassword());
         //generate access token
         String accessToken = accessTokenService.generateAccessToken(user);
-        //generate refresh token
+        //generate refresh token object and get the token string
         String refreshToken = refreshTokenService.createRefreshToken(user).getToken();
         //return login response object
         return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));

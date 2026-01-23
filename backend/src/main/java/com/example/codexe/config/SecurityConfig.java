@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,7 +42,9 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             //authorization configuration
             .authorizeHttpRequests(auth -> auth
+                //allow any requests that start with auth
                 .requestMatchers("/auth/**").permitAll()
+                //any other endpoint must be authenticated 
                 .anyRequest().authenticated()
             )
             //filter every request before it is handled
