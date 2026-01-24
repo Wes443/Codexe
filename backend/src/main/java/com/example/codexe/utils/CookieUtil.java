@@ -10,7 +10,7 @@ public class CookieUtil {
             .secure(false) //set true if using https
             .path("/") //cookie is valid for all endpoints
             .maxAge(expiresAt) //set cookie expiration date (seconds)
-            .sameSite("Strict") //Cross-Site Request Forgery (CSRF) protection
+            .sameSite("Lax") //Cross-Site Request Forgery (CSRF) protection
             .build();
     }
 }

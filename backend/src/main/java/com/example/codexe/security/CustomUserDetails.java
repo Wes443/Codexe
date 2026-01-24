@@ -34,6 +34,10 @@ public class CustomUserDetails implements UserDetails{
         return user.getPasswordHash();
     }
 
+    public User getUser(){
+        return user;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true; // You can add a field in User if needed

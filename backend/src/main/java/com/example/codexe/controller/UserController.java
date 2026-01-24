@@ -27,14 +27,16 @@ public class UserController {
         this.userService = userService;
     }
 
+    //get all the users
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
+    //get the current user (based on access token)
     @GetMapping("/me")
-    public String getUsername(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return userDetails.getUsername();
+    public User getUsername(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return userDetails.getUser();
     }
     
 }

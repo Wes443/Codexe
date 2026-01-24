@@ -59,7 +59,7 @@ public class SecurityConfig {
         //only allow requests from localhost:5173 (frontend)
         config.setAllowedOrigins(List.of("http://localhost:5173"));
         //allowed response methods
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("*"));
         //allow all headers
         config.setAllowedHeaders(List.of("*"));
         //allow server to accept cookies (for jwt tokens)
