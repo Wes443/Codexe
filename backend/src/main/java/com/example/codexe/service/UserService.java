@@ -31,11 +31,13 @@ public class UserService {
         return userDao.findAll();
     }
 
+    //call user dao and return user based on username
     @Transactional(readOnly = true)
     public User getUserByUsername(String username){
         return userDao.findByUsername(username).orElseThrow(() -> new CustomException("Username not found", HttpStatus.NOT_FOUND));
     }
 
+    //call user dao and return user based on UUID
     @Transactional(readOnly = true)
     public User getUserById(UUID userId) {
         return userDao.findById(userId).orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
@@ -47,11 +49,15 @@ public class UserService {
         try {
             //encode user's password
             String encryptedPassword = passwordEncoder.encode(user.getPasswordHash());
-            //store the encoded password in the database
+            //replace the user's password with the hash
             user.setPasswordHash(encryptedPassword);
+            //set email to null if empty string
+            if(user.getEmail().trim().isEmpty()){
+                user.setEmail(null);
+            }
             //save the user to the database
             User savedUser = userDao.save(user);
-            //force the database changes
+            //force immedidate database change
             //catch exceptions before the method returns
             userDao.flush();
             //return user
@@ -86,7 +92,8 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPasswordHash())){
             throw new CustomException("Invalid password", HttpStatus.UNAUTHORIZED);
         }
-
+        
+        //return user
         return user;
     }
 
