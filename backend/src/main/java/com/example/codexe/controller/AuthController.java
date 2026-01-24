@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    //service objects
     private final UserService userService;
     private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
@@ -37,6 +38,7 @@ public class AuthController {
         this.jwtProperties = jwtProperties;
     }
 
+    //mapping to create a new user
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody UserRequest request){
         //create new user object
@@ -47,6 +49,7 @@ public class AuthController {
         return new ResponseEntity<>("User created successfully", HttpStatus.OK);
     }
     
+    //mapping to log the user in
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest credentials, HttpServletResponse response){
         //get user based on credentials
@@ -63,10 +66,11 @@ public class AuthController {
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 
+    //mapping when page is refreshed
     @PostMapping("/refresh")
     public ResponseEntity<String> refresh(@CookieValue(name="refresh-token") String refreshToken, HttpServletResponse response){
         //get refresh token from the http-cookie
-        RefreshToken refreshTokenObj = refreshTokenService.getRefreshTokenById(refreshToken);
+        RefreshToken refreshTokenObj = refreshTokenService.getRefreshToken(refreshToken);
         //get user based on the refresh token
         User user = refreshTokenObj.getUser();
         //create new access token
@@ -79,10 +83,11 @@ public class AuthController {
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 
+    //mapping when user logs out
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@CookieValue(name="refresh-token") String refreshToken, HttpServletResponse response){
         //remove refresh token from the database
-        refreshTokenService.deleteRefreshTokenById(refreshToken);
+        refreshTokenService.deleteRefreshToken(refreshToken);
         //create blank cookie
         ResponseCookie blankCookie = CookieUtil.buildCookie("refresh-token", "", 0);
         //add blank cookie to the response header

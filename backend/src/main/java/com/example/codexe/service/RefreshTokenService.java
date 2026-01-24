@@ -6,6 +6,7 @@ import java.util.Base64;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.codexe.dao.RefreshTokenDao;
 import com.example.codexe.model.RefreshToken;
@@ -69,15 +70,15 @@ public class RefreshTokenService {
     }
 
     //return the refresh token object based on the token string
-    public RefreshToken getRefreshTokenById(String token){
-        //get the refresh token object based on the token id
+    public RefreshToken getRefreshToken(String token){
+        //get the refresh token object based on the token string
         RefreshToken refreshToken = refreshTokenDao.findByToken(token)
         //throw exception if the refresh token doesn't exist
         .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
         //if the refresh token is expired
         if(refreshToken.getExpiresAt().isBefore(Instant.now())){
             //delete it from the database
-            refreshTokenDao.delete(refreshToken);
+            deleteRefreshToken(token);
             //throw an exception
             throw new CustomException("Expired Refresh Token", HttpStatus.UNAUTHORIZED);
         }
@@ -86,12 +87,13 @@ public class RefreshTokenService {
     }
 
     //remove the refresh token from the database 
-    public void deleteRefreshTokenById(String token){
-        //get the refresh token object based on the token id
-        RefreshToken refreshToken = refreshTokenDao.findByToken(token)
-        //throw exception if the refresh token doesn't exist
-        .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
-        //remove the refresh token from the database
-        refreshTokenDao.delete(refreshToken);
+    @Transactional
+    public void deleteRefreshToken(String token){
+        //check if the refresh token exists
+        if(!refreshTokenDao.existsByToken(token)){
+            throw new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND);
+        }
+        //remove the token from the database
+        refreshTokenDao.deleteByToken(token);
     }
 }

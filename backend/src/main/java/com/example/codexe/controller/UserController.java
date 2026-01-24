@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 public class UserController {
-    //dependency injection of UserService
+    //user service object
     private final UserService userService;
     
     //constructor
@@ -27,13 +27,17 @@ public class UserController {
         this.userService = userService;
     }
 
+    //public endpoints ----------------------------------------------------------------
+
     //get all the users
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    //get the current user (based on access token)
+    //authenticated endpoints ---------------------------------------------------------
+
+    //get the current user
     @GetMapping("/me")
     public User getUsername(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return userDetails.getUser();

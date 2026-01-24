@@ -20,18 +20,21 @@ import com.example.codexe.security.JwtAuthFilter;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-
+    //auth filter object
     private final JwtAuthFilter jwtAuthFilter;
 
+    //constructor
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
+    //password encoder bean 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
+    //filter chain for all http requests
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Enable CORS (cross origin resource sharing)
@@ -47,12 +50,13 @@ public class SecurityConfig {
                 //any other endpoint must be authenticated 
                 .anyRequest().authenticated()
             )
-            //filter every request before it is handled
+            //filter every request (that requires authorization) before it is handled
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+        //return build
         return http.build();
     }
 
+    //configuration for  CORS (cross origin resource sharing)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -64,11 +68,11 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("*"));
         //allow server to accept cookies (for jwt tokens)
         config.setAllowCredentials(true);
-
+        //create source for the config
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         //apply this configuration to all endpoints
         source.registerCorsConfiguration("/**", config);
-
+        //return source
         return source;
     }
 }
