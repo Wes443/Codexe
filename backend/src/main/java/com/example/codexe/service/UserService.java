@@ -38,7 +38,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUserById(UUID userId) {
-        return userDao.findById(userId).orElseThrow(() -> new CustomException("Username not found", HttpStatus.NOT_FOUND));
+        return userDao.findById(userId).orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
     }
 
     //call user dao and add a new user to the database
@@ -47,17 +47,20 @@ public class UserService {
         try {
             //encode user's password
             String encryptedPassword = passwordEncoder.encode(user.getPasswordHash());
-
             //store the encoded password in the database
             user.setPasswordHash(encryptedPassword);
-
+            //save the user to the database
             User savedUser = userDao.save(user);
+            //force the database changes
+            //catch exceptions before the method returns
             userDao.flush();
-
+            //return user
             return savedUser;
 
         } catch (DataIntegrityViolationException e){
+            //get the inner most exception
             Throwable ex = e.getMostSpecificCause();
+            //get the message from the exception
             String message = ex.getMessage();
             
             //if the error is from a duplicate email
@@ -79,7 +82,6 @@ public class UserService {
     public User validateCredentials(String username, String password){
         //validate username
         User user = getUserByUsername(username);
-
         //validate password
         if (!passwordEncoder.matches(password, user.getPasswordHash())){
             throw new CustomException("Invalid password", HttpStatus.UNAUTHORIZED);
