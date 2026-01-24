@@ -4,7 +4,7 @@ USE typing_app;
 -- create users table --
 CREATE TABLE users (
     user_id BINARY(16) PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NULL UNIQUE,
     username VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL UNIQUE,
     highest_wpm INT,
