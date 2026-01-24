@@ -42,7 +42,7 @@ public class UserService {
     public User getUserById(UUID userId) {
         return userDao.findById(userId).orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
     }
-
+    
     //call user dao and add a new user to the database
     @Transactional
     public User createUser(User user) {
@@ -68,17 +68,14 @@ public class UserService {
             Throwable ex = e.getMostSpecificCause();
             //get the message from the exception
             String message = ex.getMessage();
-            
             //if the error is from a duplicate email
             if (message != null && message.contains("users.email")){
                 throw new CustomException("An Account With This Email Aready Exists", HttpStatus.CONFLICT);
             }
-            
             //if the error is from a duplicate username
             if (message != null && message.contains("users.username")){
                 throw new CustomException("Username Already In Use", HttpStatus.CONFLICT);
             }
-            
             //generic exception in case of unknown error
             throw new CustomException("An Unexpected Error Occured", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -92,7 +89,6 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPasswordHash())){
             throw new CustomException("Invalid password", HttpStatus.UNAUTHORIZED);
         }
-        
         //return user
         return user;
     }
