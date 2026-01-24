@@ -34,7 +34,6 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     throws ServletException, IOException {
         //extract the header
         String header = request.getHeader("Authorization");
-
         //if the request doesn't require authorization or empty header
         if (header == null || !header.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
@@ -47,13 +46,10 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         try{
             //validate the access token and the get the claim
             Claims claim = accessTokenService.validateAccessToken(token);
-
             //get the userId from the claim
             String userId = claim.getSubject();
-
-            //UserDetail object based on userId
+            //create userDetail object
             CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userId);
-
             //create authentication object
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
@@ -61,12 +57,10 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                         null,
                         userDetails.getAuthorities()
                 );
-
             //set authentication details
             authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
             );
-
             //set the request as authenticated 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

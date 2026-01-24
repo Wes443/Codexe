@@ -53,27 +53,12 @@ public class RefreshTokenService {
     
     //automatically rotate (create new) token after the old one is used
     public RefreshToken rotateRefreshToken(RefreshToken oldRefreshToken){
-        // //detatch the old refresh token from Hibernate so it doens't sync
-        // entityManager.detach(oldRefreshToken);
-        // //delete the old refresh token
-        // refreshTokenDao.deleteById(oldRefreshToken.getTokenId());
-
-        //create new refresh token object
-        RefreshToken token = new RefreshToken();
-        //set the user of the new refresh token
-        token.setUser(oldRefreshToken.getUser());
-        //set the token string
-        token.setToken(generateRefreshToken());
-        //get the current instant
-        Instant now = Instant.now();
-        //set the current issued time
-        token.setIssuedAt(now);
-        //set the expiration date of the token
-        token.setExpiresAt(now.plusMillis(jwtProperties.getRefreshExpirationMs()));
-        //revoke the old refresh token
-        oldRefreshToken.setRevoked(true);
-        //save the new token to the database
-        return refreshTokenDao.save(token);
+        //detatch the old refresh token from Hibernate so it doens't sync
+        entityManager.detach(oldRefreshToken);
+        //delete the old refresh token
+        refreshTokenDao.deleteById(oldRefreshToken.getTokenId());
+        //create a new refresh token and return it
+        return createRefreshToken(oldRefreshToken.getUser());
     }
 
     //generate refresh token string using random bytes
@@ -94,7 +79,7 @@ public class RefreshTokenService {
             //delete it from the database
             refreshTokenDao.delete(refreshToken);
             //throw an exception
-            throw new CustomException("Expird Refresh Token", HttpStatus.UNAUTHORIZED);
+            throw new CustomException("Expired Refresh Token", HttpStatus.UNAUTHORIZED);
         }
         //rotate the old refresh token and return the new one
         return rotateRefreshToken(refreshToken);

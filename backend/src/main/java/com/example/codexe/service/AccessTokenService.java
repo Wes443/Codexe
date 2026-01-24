@@ -27,9 +27,9 @@ public class AccessTokenService {
     //constructor
     public AccessTokenService(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
-
-        //convert the String into a Key object
+        //convert the access secret into a byte array
         byte[] keyBytes = Base64.getDecoder().decode(this.jwtProperties.getAccessSecret());
+        //convert the byte array into a Key object
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -46,10 +46,13 @@ public class AccessTokenService {
     //validate if the access token is valid
     public Claims validateAccessToken(String token){
         try {
+            //create a jwts parser
             return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
                 .build()
+                //verify the access token
                 .parseClaimsJws(token)
+                //extract the claim from the parser
                 .getBody();
 
         } catch (ExpiredJwtException e) {
