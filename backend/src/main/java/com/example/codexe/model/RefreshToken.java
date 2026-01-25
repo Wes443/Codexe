@@ -3,9 +3,6 @@ package com.example.codexe.model;
 import java.time.Instant;
 import java.util.UUID;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,8 +24,7 @@ import lombok.Setter;
 public class RefreshToken {
     //generate UUID automatically
     @Id
-    @GeneratedValue
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "token_id", columnDefinition = "BINARY(16)", nullable = false, updatable = false)
     private UUID tokenId;
 
