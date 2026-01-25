@@ -17,8 +17,4 @@ public interface RefreshTokenDao extends JpaRepository<RefreshToken, UUID> {
     Optional<RefreshToken> findByToken(String token);
 
     List<RefreshToken> findAllByUser(User user);
-
-    void deleteByToken(String token);
-
-    boolean existsByToken(String token);
 }

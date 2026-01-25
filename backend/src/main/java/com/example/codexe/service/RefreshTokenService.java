@@ -34,7 +34,15 @@ public class RefreshTokenService {
         this.jwtProperties = jwtProperties;
     }
 
+   //generate refresh token string using random bytes
+    private String generateRefreshToken() {
+        byte[] randomBytes = new byte[64];
+        new SecureRandom().nextBytes(randomBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
     //manually create new refresh token 
+    @Transactional
     public RefreshToken createRefreshToken(User user){
         //create a new refresh token object
         RefreshToken token = new RefreshToken();
@@ -51,49 +59,47 @@ public class RefreshTokenService {
         //save token to database
         return refreshTokenDao.save(token);
     }
-    
-    //automatically rotate (create new) token after the old one is used
-    public RefreshToken rotateRefreshToken(RefreshToken oldRefreshToken){
-        //detatch the old refresh token from Hibernate so it doens't sync
-        entityManager.detach(oldRefreshToken);
-        //delete the old refresh token
-        refreshTokenDao.deleteById(oldRefreshToken.getTokenId());
-        //create a new refresh token and return it
-        return createRefreshToken(oldRefreshToken.getUser());
-    }
 
-    //generate refresh token string using random bytes
-    private String generateRefreshToken() {
-        byte[] randomBytes = new byte[64];
-        new SecureRandom().nextBytes(randomBytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
-    }
-
-    //return the refresh token object based on the token string
-    public RefreshToken getRefreshToken(String token){
+    @Transactional
+    public RefreshToken revokeToken(String token){
         //get the refresh token object based on the token string
         RefreshToken refreshToken = refreshTokenDao.findByToken(token)
         //throw exception if the refresh token doesn't exist
         .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
+        //set the refresh token to revoked
+        refreshToken.setRevoked(true);
+        //update the database
+        refreshTokenDao.save(refreshToken);
         //if the refresh token is expired
         if(refreshToken.getExpiresAt().isBefore(Instant.now())){
-            //delete it from the database
-            deleteRefreshToken(token);
-            //throw an exception
-            throw new CustomException("Expired Refresh Token", HttpStatus.UNAUTHORIZED);
+            //return null
+            return null;
         }
-        //rotate the old refresh token and return the new one
-        return rotateRefreshToken(refreshToken);
+        //return the updated refresh token
+        return refreshToken;
     }
 
-    //remove the refresh token from the database 
-    @Transactional
-    public void deleteRefreshToken(String token){
-        //check if the refresh token exists
-        if(!refreshTokenDao.existsByToken(token)){
-            throw new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND);
+    //rotate and return a new refresh token
+    public RefreshToken getRefreshToken(String token){
+        //get the old refresh token
+        RefreshToken oldRefreshToken = revokeToken(token);
+        //if the old refresh token is expired
+        if(oldRefreshToken == null){
+            //throw an exception
+            throw new CustomException("Refresh Token is Expired", HttpStatus.UNAUTHORIZED);
         }
+        //create and return a new refresh token
+        return createRefreshToken(oldRefreshToken.getUser());
+    }
+
+    //remove the refresh token from the database upon logout
+    @Transactional
+    public void logout(String token){
+        //get the refresh token object based on the token string
+        RefreshToken refreshToken = refreshTokenDao.findByToken(token)
+        //throw exception if the refresh token doesn't exist
+        .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
         //remove the token from the database
-        refreshTokenDao.deleteByToken(token);
+        refreshTokenDao.delete(refreshToken);
     }
 }

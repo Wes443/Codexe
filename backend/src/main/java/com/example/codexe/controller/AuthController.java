@@ -87,7 +87,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@CookieValue(name="refresh-token") String refreshToken, HttpServletResponse response){
         //remove refresh token from the database
-        refreshTokenService.deleteRefreshToken(refreshToken);
+        refreshTokenService.logout(refreshToken);
         //create blank cookie
         ResponseCookie blankCookie = CookieUtil.buildCookie("refresh-token", "", 0);
         //add blank cookie to the response header

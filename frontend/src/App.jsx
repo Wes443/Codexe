@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Login from './components/Login'
 import CreateAccount from './components/CreateAccount'
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, BrowserRouter} from 'react-router-dom'
 import { refresh, getCurrentUser } from './services/userServices'
 
 function App() {
@@ -15,10 +15,13 @@ function App() {
     const autoLogin = async () => {
       try{
         const token = await refresh();
+        
         if (token){
+          setLoggedIn(true);
+
           const user = await getCurrentUser();
           setUser(user);
-          setLoggedIn(true);
+          
         }
       }catch (error){
         setLoggedIn(false);
@@ -40,19 +43,23 @@ function App() {
     return <p>Loading...</p>;
   }
 
-  return (
-    <>
-      {!loggedIn && (
+  if (!loggedIn){
+    return (
+      <BrowserRouter>
         <Routes>
           <Route path='/' element={<Login onLoginSuccess={handleLoginSuccess}/>} />
           <Route path='/create-account' element={<CreateAccount />} />
         </Routes>
-      )}
+      </BrowserRouter>
+    );
+  }
 
-      {loggedIn && (
-        <p>Welcome, {user.username}!</p>
-      )}
-    </>
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<p>Welcome, {user.username}!</p>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
