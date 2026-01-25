@@ -1,5 +1,7 @@
 package com.example.codexe.controller;
 
+import java.time.Instant;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,9 @@ import com.example.codexe.service.UserService;
 import com.example.codexe.utils.CookieUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

@@ -1,31 +1,46 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Login from './components/Login'
 import CreateAccount from './components/CreateAccount'
-import {Routes, Route, BrowserRouter} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { refresh, getCurrentUser } from './services/userServices'
 
 function App() {
+  console.log("App mounted", performance.now());
   //states
   const [user, setUser] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  //use effect for auto logging in (run once when component mounts)
+  //boolean for auto login
+  const hasRun = useRef(false);
+
+  //use effect for auto logging in
   useEffect(() => {
+    //prevent refresh from running every mount
+    if(hasRun.current){
+      return;
+    }
+    //after first mount, set boolean to true
+    hasRun.current = true;
+    //auto login function
     const autoLogin = async () => {
       try{
+        //call refresh api and get the access token
         const token = await refresh();
-        
+        //if the access token exists
         if (token){
+          //set login state to true
           setLoggedIn(true);
-
+          //get the user and set the state
           const user = await getCurrentUser();
           setUser(user);
           
         }
       }catch (error){
+        //set login state to false
         setLoggedIn(false);
       }finally{
+        //set loading state to false
         setLoading(false);
       }
     };
@@ -38,28 +53,21 @@ function App() {
     setLoggedIn(true);
   }
 
-  //display loading inbetween transitions
-  if (loading){
-    return <p>Loading...</p>;
-  }
-
-  if (!loggedIn){
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Login onLoginSuccess={handleLoginSuccess}/>} />
-          <Route path='/create-account' element={<CreateAccount />} />
-        </Routes>
-      </BrowserRouter>
-    );
-  }
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<p>Welcome, {user.username}!</p>} />
-      </Routes>
-    </BrowserRouter>
+    <div>
+      {loading && <p>Loading...</p>}
+
+      {!loading && !loggedIn && (
+        <Routes>
+          <Route path="/" element={<Login onLoginSuccess={ handleLoginSuccess } />} />
+          <Route path="/create-account" element={<CreateAccount />} />
+        </Routes>
+      )}
+
+      {!loading && loggedIn && (
+        <p>Welcome, {user.username}!</p>
+      )}
+    </div>
   );
 }
 
