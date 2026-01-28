@@ -16,7 +16,7 @@ function App() {
 
   //use effect for auto logging in
   useEffect(() => {
-    //prevent refresh from running every mount
+    //only refresh on first mount
     if(hasRun.current){
       return;
     }

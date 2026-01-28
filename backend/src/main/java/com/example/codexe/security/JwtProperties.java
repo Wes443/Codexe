@@ -10,7 +10,6 @@ public class JwtProperties {
     private long refreshExpirationMs;
     private long refreshCookieExpirationS;
     private String accessSecret;
-
     //getter methods
     public long getAccessExpirationMs(){
         return accessExpirationMs;

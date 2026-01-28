@@ -6,9 +6,9 @@ import App from './App.jsx'
 console.log("Root render");
 
 createRoot(document.getElementById('root')).render(
-  
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-  
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
 )
