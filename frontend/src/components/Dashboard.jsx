@@ -1,7 +1,7 @@
 import { useAuth } from "../auth/useAuth";
 
 function Dashboard() {
-    const [user] = useAuth();
+    const { user } = useAuth();
 
     return(
         <p>welcome {user.username}!</p>

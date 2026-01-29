@@ -17,7 +17,7 @@ function CreateAccount() {
     const nav = useNavigate();
 
     //get the user from context
-    const [ user ] = useAuth();
+    const { user } = useAuth();
 
     //if the user is already signed in
     if(user){

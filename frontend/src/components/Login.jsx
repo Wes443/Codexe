@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login } from '../auth/Authorization'
 import { useAuth } from '../auth/useAuth';
 
 function Login() {    
@@ -9,8 +8,8 @@ function Login() {
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
 
-    //get the user from context
-    const [user] = useAuth();
+    //get the user and login function from context
+    const { user, login } = useAuth();
 
     //navigation
     const nav = useNavigate();

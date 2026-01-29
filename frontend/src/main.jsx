@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { Authorization } from './auth/Authorization.js'
+import { Authorization } from './auth/Authorization'
 import App from './App.jsx'
 
 //for testing

@@ -1,9 +1,9 @@
-import { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useState, useEffect, useMemo, useRef } from 'react';
 import createApi from '../services/api';
 import { loginRequest, getCurrentUser } from '../services/userServices';
 
 //create a context variable
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 export function Authorization( {children} ){
     //states
@@ -72,6 +72,7 @@ export function Authorization( {children} ){
         <AuthContext.Provider 
             value={{
                 api,
+                login,
                 accessToken,
                 setAccessToken,
                 user,
