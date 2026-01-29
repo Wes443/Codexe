@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { createUser } from '../services/userServices'
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/useAuth';
+
 
 function CreateAccount() {
     //states
@@ -15,6 +17,13 @@ function CreateAccount() {
     //navigation
     const nav = useNavigate();
 
+    const [ user ] = useAuth();
+
+    //if the user is already signed in
+    if(user){
+        return <p>Please logout before creating a new account!</p>
+    }
+
     //functions
     const handleFormChange = (e) => {
         setFormData({
@@ -27,7 +36,15 @@ function CreateAccount() {
         e.preventDefault();
 
         try{
+            //call the api service to create a user
             await createUser(formData);
+            //reset the form data
+            setFormData({
+                email: "",
+                username:"",
+                password: ""    
+            })
+            //set the message
             setMessage("Account created! Please log in.")
 
         }catch(error){
@@ -78,7 +95,7 @@ function CreateAccount() {
                 <p>{message}</p>
                 <p>Already Have an Account?</p>
                 {/* go to the login account page */}
-                <button onClick={() => nav('/')}>Login</button>
+                <button onClick={() => nav('/', {replace: true})}>Login</button>
             </div>
         </form>
     );

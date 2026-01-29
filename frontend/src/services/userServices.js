@@ -1,48 +1,37 @@
-import api from './api'
-import {setAccessToken, clearAccessToken} from '../auth/AccessToken'
-
 //create user
-export async function createUser(userData){
+export async function createUser(api, userData){
     const response = await api.post("/auth/create-user", userData);
     return response.data;
 }
 
 //get current user based on access token
-export async function getCurrentUser() {
+export async function getCurrentUser(api) {
+    //response from backend
     const response = await api.get("/me");
+    //return the user object
     return response.data;
 }
 
 //log the user in and return the user object
-export async function loginUser(credentials){
+export async function loginRequest(api, credentials){
     //response from backend
     const response = await api.post("/auth/login", credentials);
-    //get the access token from the response
-    const accessToken = response.data;
-    //store the access token in memoery
-    setAccessToken(accessToken);
-    //get the user based on the access token
-    const user = await getCurrentUser();
-    //return the user
-    return user;
+    //return the new access token
+    return response.data;
 }
 
 //get a new access token upon page refresh
-export async function refresh(){
+export async function refresh(api){
     //response from backend
     const response = await api.post("/auth/refresh");
-    //get access token
-    const accessToken = response.data;
-    //store the access token in memoery
-    setAccessToken(accessToken);
-    //return the access token
+    //return the new access token
     return response.data;
 }
 
 //log the user out
-export async function logout(){
+export async function logout(api){
     //response from backend
     const response = await api.post('/auth/logout');
-    //cler the acces token from memory
-    clearAccessToken();
+    //return response
+    return response.data;
 }

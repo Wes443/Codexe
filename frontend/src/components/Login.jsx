@@ -1,23 +1,34 @@
 import { useState } from 'react'
-import { loginUser } from '../services/userServices'
 import { useNavigate } from 'react-router-dom'
+import { login } from '../auth/Authorization'
 
-function Login({ onLoginSuccess }) {
+function Login() {    
     //states
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
 
+    //get the user from context
+    const [user] = getAuth();
+
     //navigation
     const nav = useNavigate();
+
+    //navigate to dashboard if user is already signed in
+    if(user){
+        nav("/dashboard", {replace: true});
+    }
 
     //functions
     const handleLogin = async (e) => {
         e.preventDefault();
         try{
-            const user = await loginUser({ username, password });
+            //set the user in the context
+            await login({ username, password });
+            //set the message
             setMessage("Login Success");
-            onLoginSuccess(user);
+            //navigate to dashboard
+            nav("/dashboard", {replace: true});
 
         } catch(error){
             if (error.response) {
