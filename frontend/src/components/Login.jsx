@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../auth/Authorization'
+import { useAuth } from '../auth/useAuth';
 
 function Login() {    
     //states
@@ -9,7 +10,7 @@ function Login() {
     const [message, setMessage] = useState("");
 
     //get the user from context
-    const [user] = getAuth();
+    const [user] = useAuth();
 
     //navigation
     const nav = useNavigate();

@@ -3,7 +3,6 @@ import { createUser } from '../services/userServices'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 
-
 function CreateAccount() {
     //states
     const [formData, setFormData] = useState({
@@ -17,6 +16,7 @@ function CreateAccount() {
     //navigation
     const nav = useNavigate();
 
+    //get the user from context
     const [ user ] = useAuth();
 
     //if the user is already signed in

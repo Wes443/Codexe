@@ -1,13 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import getAuth from '.'
+import { useAuth } from "./useAuth";
 
 function CheckAuth({ children }) {
     //get user and loading from global context
-    const [user, loading] = getAuth();
-    //if the context is loading
-    if(loading){
-        return <p>Loading...</p>
-    }
+    const [user] = useAuth();
 
     //if there is no authorized user
     if(!user){
