@@ -1,10 +1,14 @@
-import { useAuth } from "../auth/useAuth";
+import { AuthModule } from "../auth/AuthModule";
 
 function Dashboard() {
-    const { user } = useAuth();
 
+    const user = AuthModule.getUser();
+    
     return(
-        <p>welcome {user.username}!</p>
+        <>
+            <p>welcome {user.username}!</p>
+        </>
+
     );
 }
 

@@ -9,10 +9,10 @@ console.log("Root render");
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Authorization>
       <BrowserRouter>
-        <App />
+        <Authorization>
+          <App />
+        </Authorization>
       </BrowserRouter>
-    </Authorization>
   </StrictMode>
 )

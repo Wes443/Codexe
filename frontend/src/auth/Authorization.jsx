@@ -1,50 +1,39 @@
-import { createContext, useState, useEffect, useMemo, useRef } from 'react';
-import createApi from '../services/api';
-import { loginRequest, getCurrentUser } from '../services/userServices';
-
-//create a context variable
-export const AuthContext = createContext(null);
+import { useState, useEffect, useRef } from 'react';
+import { loginRequest, getCurrentUser, refresh } from '../services/userServices';
+import { AuthModule } from './AuthModule';
 
 export function Authorization( {children} ){
-    //states
-    const [accessToken, setAccessToken] = useState(null);
-    const [user, setUser] = useState(null);
+    //loading state
     const [loading, setLoading] = useState(true);
-    
-    //boolean for auto login
-    const hasRun = useRef(false)
 
-    //global api instance 
-    //createApi is only run when accessToken changes values
-    const api = useMemo(() => createApi(() => accessToken), [accessToken]);
+    const first = useRef(false);
 
     //use effect for auto logging in
     useEffect(() => {
-        //only refresh on first mount
-        if(hasRun.current){
-            return;
-        }
-        //after first mount, set boolean to true
-        hasRun.current = true;
+        if (first.current) return;
+
+        first.current = true;
+
         //auto login function
         const autoLogin = async () => {
             try{
-                //call refresh api and get the access token
-                const token = await refresh(api);
+                //call refresh api and get new access token
+                const token = await refresh();
+
                 //if the access token exists
                 if (token){
                     //set the new access token
-                    setAccessToken(token);
-                    //get the user 
-                    const user = await getCurrentUser(api);
+                    AuthModule.setAccessToken(token);
+                    //get the user
+                    const user = await getCurrentUser();
                     //set the user
-                    setUser(user);  
+                    AuthModule.setUser(user);  
+
                 }
 
             }catch (error){
-                //reset context if error
-                setAccessToken(null);
-                setUser(null);
+                //reset module upon error
+                AuthModule.reset()
 
             }finally{
                 //set loading state to false
@@ -54,35 +43,24 @@ export function Authorization( {children} ){
         autoLogin();
     }, []);
 
-    //function for logging the user in
-    const login = async(credentials) => {
-        //call the login api and get the access token
-        const token = await loginRequest(api, credentials);
-        //set the access token in context
-        setAccessToken(token);
-        //get the current user
-        const user = await getCurrentUser();
-        //set the current user in context
-        setUser(user);
+    //block the children from rendering
+    if(loading){
+        return <div>loading...</div>;
     }
 
-    return (
-        //set the provider of the auth context
-        //share the auth context with all the children components
-        <AuthContext.Provider 
-            value={{
-                api,
-                login,
-                accessToken,
-                setAccessToken,
-                user,
-                setUser,
-                loading,
-                setLoading
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
+    //return the children of <Authorization>
+    return children;
+}
+
+//function for logging the user in
+export const login = async(module, credentials) => {
+    //call the login api and get the access token
+    const token = await loginRequest(credentials);
+    //set the access token
+    module.setAccessToken(token);
+    //get the current user
+    const user = await getCurrentUser();
+    //set the current user 
+    module.setUser(user);
 }
 

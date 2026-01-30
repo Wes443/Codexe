@@ -1,12 +1,10 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "./useAuth";
+import { AuthModule } from "./AuthModule";
 
 function CheckAuth({ children }) {
-    //get user and loading from global context
-    const { user } = useAuth();
 
-    //if there is no authorized user
-    if(!user){
+    //return to login page if there is no user
+    if(!AuthModule.getUser()){
         return <Navigate to="/" replace />;
     }
 

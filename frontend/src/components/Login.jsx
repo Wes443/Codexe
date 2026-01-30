@@ -1,34 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../auth/useAuth';
+import { AuthModule } from '../auth/AuthModule';
+import { login } from '../auth/Authorization';
 
 function Login() {    
     //states
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(true);
 
-    //get the user and login function from context
-    const { user, login } = useAuth();
-
-    //navigation
+    //navigation object
     const nav = useNavigate();
 
     //navigate to dashboard if user is already signed in
-    if(user){
-        nav("/dashboard", {replace: true});
-    }
+    useEffect(() => {
+        if(AuthModule.getUser()){
+            nav('/dashboard', {replace: true});
+        }
+    }, [nav]);
 
-    //functions
+    //handle the user login upon form submission
     const handleLogin = async (e) => {
         e.preventDefault();
         try{
-            //set the user in the context
-            await login({ username, password });
+            //call login function 
+            await login(AuthModule, { username, password });
             //set the message
             setMessage("Login Success");
             //navigate to dashboard
-            nav("/dashboard", {replace: true});
+            nav('/dashboard', {replace: true});
 
         } catch(error){
             if (error.response) {
@@ -36,6 +37,10 @@ function Login() {
             } else {
                 setMessage("Server Unreachable");
             }
+
+        } finally{
+            //allow module to update properly
+            setLoading(false); 
         }
     };
     
@@ -68,7 +73,7 @@ function Login() {
                 <p>{message}</p>
                 <p>Don't have an account?</p>
                 {/* go to the create account page */}
-                <button onClick={() => nav('/create-account')}>Create Account</button>
+                <button onClick={() => nav('/create-account', {replace: true})}>Create Account</button>
             </div>
         </form>
     );

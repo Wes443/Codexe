@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { createUser } from '../services/userServices'
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/useAuth';
 
 function CreateAccount() {
     //states
@@ -15,14 +14,6 @@ function CreateAccount() {
 
     //navigation
     const nav = useNavigate();
-
-    //get the user from context
-    const { user } = useAuth();
-
-    //if the user is already signed in
-    if(user){
-        return <p>Please logout before creating a new account!</p>
-    }
 
     //functions
     const handleFormChange = (e) => {
