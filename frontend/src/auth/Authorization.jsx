@@ -6,15 +6,18 @@ export function Authorization( {children} ){
     //loading state
     const [loading, setLoading] = useState(true);
 
-    const first = useRef(false);
+    //flag
+    const firstMount = useRef(true);
 
-    //use effect for auto logging in
+    //use effect for auto login
     useEffect(() => {
-        if (first.current) return;
+        //return if not the first mount
+        if (!firstMount.current) return;
 
-        first.current = true;
+        //set flag to false
+        first.current = false;
 
-        //auto login function
+        //run auto login function on first mount
         const autoLogin = async () => {
             try{
                 //call refresh api and get new access token
@@ -22,13 +25,12 @@ export function Authorization( {children} ){
 
                 //if the access token exists
                 if (token){
-                    //set the new access token
+                    //set the new access token in module
                     AuthModule.setAccessToken(token);
                     //get the user
                     const user = await getCurrentUser();
-                    //set the user
+                    //set the user in module
                     AuthModule.setUser(user);  
-
                 }
 
             }catch (error){
@@ -36,14 +38,14 @@ export function Authorization( {children} ){
                 AuthModule.reset()
 
             }finally{
-                //set loading state to false
+                //allow module to update properly 
                 setLoading(false);
             }
         };
         autoLogin();
     }, []);
 
-    //block the children from rendering
+    //block the children from mounting
     if(loading){
         return <div>loading...</div>;
     }

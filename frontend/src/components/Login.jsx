@@ -32,6 +32,7 @@ function Login() {
             nav('/dashboard', {replace: true});
 
         } catch(error){
+            //set message upon error
             if (error.response) {
                 setMessage("Login Failed");
             } else {

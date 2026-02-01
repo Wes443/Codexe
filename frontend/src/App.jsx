@@ -5,9 +5,6 @@ import CreateAccount from './components/CreateAccount';
 import Dashboard from './components/Dashboard';
 
 function App() {
-  //for testing
-  console.log("App mounted", performance.now());
-
   return (
     <>
       <Routes>
