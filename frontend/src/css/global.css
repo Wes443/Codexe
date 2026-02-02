@@ -1,0 +1,8 @@
+/* import componenet css */
+@import 'components/app.css';
+@import 'components/create-account.css';
+@import 'components/login.css';
+
+/* import variable css */
+@import 'variables/text.css';
+@import 'variables/themes.css';

@@ -1,0 +1,10 @@
+.input_field input {
+    width: 175px;
+    height: 25px;
+    background: var(--input-box-color);
+    border: 5px solid var(--input-box-border-color);
+    box-shadow: 0px 0px 7px 7px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    margin: 10px;
+    padding-left: 10px;
+}

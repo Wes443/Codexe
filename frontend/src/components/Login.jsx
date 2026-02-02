@@ -47,23 +47,19 @@ function Login() {
     
     return (
         <form onSubmit={handleLogin}>
-            <div>
-                <label>Username</label>
+            <div className='input_field'>
                 <input 
                     type="text"
-                    name="username"
-                    placeholder="*required"
+                    placeholder="username"
                     value={username} 
                     onChange={(e) => setUsername(e.target.value)}
                     required 
                 />
             </div>
-            <div>
-                <label>Password</label>
+            <div className='input_field'>
                 <input 
                     type="password"
-                    name="password"
-                    placeholder="*required"
+                    placeholder="password"
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)} 
                     required
