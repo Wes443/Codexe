@@ -32,23 +32,24 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
     throws ServletException, IOException {
-        //extract the header
+        //extract the auth header
         String header = request.getHeader("Authorization");
-        //if the request doesn't require authorization or empty header
+
+        //return if auth not needed
         if (header == null || !header.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
         }
 
-        //get the token from the request header (remove the string "Bearer ")
+        //get the token from header
         String token = header.substring(7);
 
         try{
-            //validate the access token and the get the claim
+            //validate token
             Claims claim = accessTokenService.validateAccessToken(token);
-            //get the userId from the claim
+            //get the userId
             String userId = claim.getSubject();
-            //create userDetail object
+            //create userDetail
             CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userId);
             //create authentication object
             UsernamePasswordAuthenticationToken authentication =

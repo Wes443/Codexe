@@ -41,20 +41,17 @@ public class RefreshTokenService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
-    //manually create new refresh token 
+    //create new refresh token 
     @Transactional
     public RefreshToken createRefreshToken(User user){
         //create a new refresh token object
         RefreshToken token = new RefreshToken();
-        //set the user of the refresh token
+        //set token variables
         token.setUser(user);
-        //set the token string
         token.setToken(generateRefreshToken());
-        //get the current instant
+
         Instant now = Instant.now();
-        //set the current issued time
         token.setIssuedAt(now);
-        //set the expiration date of the token
         token.setExpiresAt(now.plusMillis(jwtProperties.getRefreshExpirationMs()));
         //save token to database
         return refreshTokenDao.save(token);
@@ -64,15 +61,13 @@ public class RefreshTokenService {
     public RefreshToken revokeToken(String token){
         //get the refresh token object based on the token string
         RefreshToken refreshToken = refreshTokenDao.findByToken(token)
-        //throw exception if the refresh token doesn't exist
         .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
         //set the refresh token to revoked
         refreshToken.setRevoked(true);
-        //update the database
+        //update the db
         refreshTokenDao.save(refreshToken);
-        //if the refresh token is expired
+        //return null if token expired
         if(refreshToken.getExpiresAt().isBefore(Instant.now())){
-            //return null
             return null;
         }
         //return the updated refresh token
@@ -83,9 +78,8 @@ public class RefreshTokenService {
     public RefreshToken getRefreshToken(String token){
         //get the old refresh token
         RefreshToken oldRefreshToken = revokeToken(token);
-        //if the old refresh token is expired
+        //throw exception if expired token
         if(oldRefreshToken == null){
-            //throw an exception
             throw new CustomException("Refresh Token is Expired", HttpStatus.UNAUTHORIZED);
         }
         //create and return a new refresh token
@@ -97,7 +91,6 @@ public class RefreshTokenService {
     public void logout(String token){
         //get the refresh token object based on the token string
         RefreshToken refreshToken = refreshTokenDao.findByToken(token)
-        //throw exception if the refresh token doesn't exist
         .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
         //remove the token from the database
         refreshTokenDao.delete(refreshToken);

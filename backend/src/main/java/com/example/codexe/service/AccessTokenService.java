@@ -27,9 +27,8 @@ public class AccessTokenService {
     //constructor
     public AccessTokenService(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
-        //convert the access secret into a byte array
+        //get signing key based on secret
         byte[] keyBytes = Base64.getDecoder().decode(this.jwtProperties.getAccessSecret());
-        //convert the byte array into a Key object
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 

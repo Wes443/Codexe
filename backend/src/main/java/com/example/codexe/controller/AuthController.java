@@ -43,9 +43,8 @@ public class AuthController {
     //mapping to create a new user
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody UserRequest request){
-        //create new user object
+        //create new user object and call service
         User user = new User(request.getEmail(), request.getUsername(), request.getPassword());
-        //call user service 
         userService.createUser(user);
         //return response
         return new ResponseEntity<>("User created successfully", HttpStatus.OK);
@@ -54,32 +53,28 @@ public class AuthController {
     //mapping to log the user in
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest credentials, HttpServletResponse response){
-        //get user based on credentials
+        //validate cred and get user
         User user = userService.validateCredentials(credentials.getUsername(), credentials.getPassword());
-        //generate access token
+        //generate access and refresh token
         String accessToken = accessTokenService.generateAccessToken(user);
-        //generate refresh token object and get the token string
         String refreshToken = refreshTokenService.createRefreshToken(user).getToken();
-        //generate a http-cookie for the refresh token
+        //generate cookie and add to header
         ResponseCookie refreshTokenCookie = CookieUtil.buildCookie("refresh-token", refreshToken, jwtProperties.getRefreshCookieExpirationS());
-        //add the cookie to the response header 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
         //return access token
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 
-    //mapping when page is refreshed
+    //mapping on page reload
     @PostMapping("/refresh")
     public ResponseEntity<String> refresh(@CookieValue(name="refresh-token") String refreshToken, HttpServletResponse response){
-        //get refresh token from the http-cookie
+        //get refresh token from cookie
         RefreshToken refreshTokenObj = refreshTokenService.getRefreshToken(refreshToken);
-        //get user based on the refresh token
         User user = refreshTokenObj.getUser();
         //create new access token
         String accessToken = accessTokenService.generateAccessToken(user);
-        //generate new http-cookie for the refresh token
+        //generate cookie and add to header
         ResponseCookie refreshTokenCookie = CookieUtil.buildCookie("refresh-token", refreshTokenObj.getToken(), jwtProperties.getRefreshCookieExpirationS());
-        //add the cookie to the response header 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
         //return access token
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
@@ -88,13 +83,12 @@ public class AuthController {
     //mapping when user logs out
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@CookieValue(name="refresh-token") String refreshToken, HttpServletResponse response){
-        //remove refresh token from the database
+        //remove refresh token from the db
         refreshTokenService.logout(refreshToken);
-        //create blank cookie
+        //set header to blank cookie
         ResponseCookie blankCookie = CookieUtil.buildCookie("refresh-token", "", 0);
-        //add blank cookie to the response header
         response.addHeader("Set-Cookie", blankCookie.toString());
-        //return response entity
+        //return response
         return new ResponseEntity<>("Logout Successfull", HttpStatus.OK);
     }
 }

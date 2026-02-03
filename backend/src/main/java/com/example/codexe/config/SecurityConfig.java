@@ -37,38 +37,32 @@ public class SecurityConfig {
     //filter chain for all http requests
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Enable CORS (cross origin resource sharing)
+        //implement custom config 
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            // Disable CSRF for JWT-based authentication
+            //disable CSRF for JWT-based authentication
             .csrf(csrf -> csrf.disable())
             //stateless session for jwt
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             //authorization configuration
             .authorizeHttpRequests(auth -> auth
-                //allow any requests that start with auth
                 .requestMatchers("/auth/**").permitAll()
-                //any other endpoint must be authenticated 
                 .anyRequest().authenticated()
             )
-            //filter every request (that requires authorization) before it is handled
+            //filter authenticated requests
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         //return build
         return http.build();
     }
 
-    //configuration for  CORS (cross origin resource sharing)
+    //configuration source for CORS (cross origin resource sharing)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        //only allow requests from localhost:5173 (frontend)
         config.setAllowedOrigins(List.of("http://localhost:5173"));
-        //allowed response methods
         config.setAllowedMethods(List.of("*"));
-        //allow all headers
         config.setAllowedHeaders(List.of("*"));
         //allow server to accept cookies (for jwt tokens)
         config.setAllowCredentials(true);
-        //create source for the config
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         //apply this configuration to all endpoints
         source.registerCorsConfiguration("/**", config);
