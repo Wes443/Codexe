@@ -92,7 +92,7 @@ public class RefreshTokenService {
         newToken.setIssuedAt(now);
         newToken.setExpiresAt(now.plusMillis(jwtProperties.getRefreshExpirationMs()));
 
-        //save and return toeken
+        //save and return token
         return refreshTokenDao.save(newToken);
     }
 
