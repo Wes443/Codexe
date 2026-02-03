@@ -61,53 +61,38 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public RefreshToken revokeToken(String token){
-        //get the refresh token object based on the token string
+    public void revokeToken(String token){
+        //get refresh token
         RefreshToken refreshToken = refreshTokenDao.findByToken(token)
-        //throw exception if the refresh token doesn't exist
         .orElseThrow(() -> new CustomException("Refresh Token Not Found", HttpStatus.NOT_FOUND));
         //set the refresh token to revoked
         refreshToken.setRevoked(true);
-        //update the database
+        //update the db
         refreshTokenDao.save(refreshToken);
-        //if the refresh token is expired
-        if(refreshToken.getExpiresAt().isBefore(Instant.now())){
-            //return null
-            return null;
-        }
-        //return the updated refresh token
-        return refreshToken;
     }
-
 
     //rotate and return a new refresh token
     @Transactional
-    public RefreshToken getRefreshToken(String token){
-        // //get the old refresh token
-        // RefreshToken oldRefreshToken = revokeToken(token);
-        // //if the old refresh token is expired
-        // if(oldRefreshToken == null){
-        //     //throw an exception
-        //     throw new CustomException("Refresh Token is Expired", HttpStatus.UNAUTHORIZED);
-        // }
-        // //create and return a new refresh token
-        // return createRefreshToken(oldRefreshToken.getUser());
-
+    public RefreshToken rotateRefreshToken(String token){
+        //get old token
         RefreshToken oldToken = refreshTokenDao.findByToken(token)
         .orElseThrow(() -> new CustomException("Invalid Token", HttpStatus.NOT_FOUND));
 
+        //detach object persistence by hibernate
         entityManager.detach(oldToken);
 
+        //delete the token
         refreshTokenDao.delete(oldToken);
 
+        //create new token
         RefreshToken newToken = new RefreshToken();
         newToken.setUser(oldToken.getUser());
         newToken.setToken(generateRefreshToken());
-
         Instant now = Instant.now();
         newToken.setIssuedAt(now);
         newToken.setExpiresAt(now.plusMillis(jwtProperties.getRefreshExpirationMs()));
 
+        //save and return toeken
         return refreshTokenDao.save(newToken);
     }
 

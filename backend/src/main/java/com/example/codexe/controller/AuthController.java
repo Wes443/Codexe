@@ -72,7 +72,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<String> refresh(@CookieValue(name="refresh-token") String refreshToken, HttpServletResponse response){
         //get refresh token from the http-cookie
-        RefreshToken refreshTokenObj = refreshTokenService.getRefreshToken(refreshToken);
+        RefreshToken refreshTokenObj = refreshTokenService.rotateRefreshToken(refreshToken);
         //get user based on the refresh token
         User user = refreshTokenObj.getUser();
         //create new access token
