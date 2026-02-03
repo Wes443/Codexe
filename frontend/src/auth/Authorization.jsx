@@ -15,7 +15,7 @@ export function Authorization( {children} ){
         if (!firstMount.current) return;
 
         //set flag to false
-        first.current = false;
+        firstMount.current = false;
 
         //run auto login function on first mount
         const autoLogin = async () => {

@@ -79,17 +79,36 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
+
     //rotate and return a new refresh token
+    @Transactional
     public RefreshToken getRefreshToken(String token){
-        //get the old refresh token
-        RefreshToken oldRefreshToken = revokeToken(token);
-        //if the old refresh token is expired
-        if(oldRefreshToken == null){
-            //throw an exception
-            throw new CustomException("Refresh Token is Expired", HttpStatus.UNAUTHORIZED);
-        }
-        //create and return a new refresh token
-        return createRefreshToken(oldRefreshToken.getUser());
+        // //get the old refresh token
+        // RefreshToken oldRefreshToken = revokeToken(token);
+        // //if the old refresh token is expired
+        // if(oldRefreshToken == null){
+        //     //throw an exception
+        //     throw new CustomException("Refresh Token is Expired", HttpStatus.UNAUTHORIZED);
+        // }
+        // //create and return a new refresh token
+        // return createRefreshToken(oldRefreshToken.getUser());
+
+        RefreshToken oldToken = refreshTokenDao.findByToken(token)
+        .orElseThrow(() -> new CustomException("Invalid Token", HttpStatus.NOT_FOUND));
+
+        entityManager.detach(oldToken);
+
+        refreshTokenDao.delete(oldToken);
+
+        RefreshToken newToken = new RefreshToken();
+        newToken.setUser(oldToken.getUser());
+        newToken.setToken(generateRefreshToken());
+
+        Instant now = Instant.now();
+        newToken.setIssuedAt(now);
+        newToken.setExpiresAt(now.plusMillis(jwtProperties.getRefreshExpirationMs()));
+
+        return refreshTokenDao.save(newToken);
     }
 
     //remove the refresh token from the database upon logout
