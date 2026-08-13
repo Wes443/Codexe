@@ -5,7 +5,6 @@ export class User {
     firstName: string;
     lastName: string;
     joinDate: Timestamp;
-    profileImage: string;
     email: string;
 
     constructor (
@@ -13,14 +12,12 @@ export class User {
         firstName: string,
         lastName: string,
         joinDate: Timestamp,
-        profileImage: string,
         email: string,
     ) {
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.joinDate = joinDate;
-        this.profileImage = profileImage;
         this.email = email;
     }
 }
