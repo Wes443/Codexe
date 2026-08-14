@@ -19,7 +19,7 @@ function Setup() {
         if(loading) return;
         if(!user) navigate("/login");
         if(userDoc) navigate("/");
-    }, [loading]);
+    }, [loading, user, userDoc]);
 
     //function to handle setup completion 
     const handleSubmit = async() => {
