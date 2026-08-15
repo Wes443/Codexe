@@ -10,7 +10,8 @@ export default function AccountBar({isGuest}) {
     //function to handle signout 
 	const handleSignOut = async () => {
 		await signOut(auth);
-		navigate("/login");
+        //reload page 
+        navigate(0);
 	};
 
     //function to handle when the user icon is pressed

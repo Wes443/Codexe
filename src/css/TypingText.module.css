@@ -58,13 +58,19 @@
 }
 
 .text {
-    width: fit-content;
-    height: fit-content;
     position: relative;
     cursor: pointer;
     white-space: pre-wrap;
     tab-size: 4;
     font-size: min(5cqw, 5cqh, 40px);
+    box-sizing: border-box;
+    border: 1px solid red;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.text::-webkit-scrollbar {
+    display: none;
 }
 
 .text-container {
@@ -96,3 +102,16 @@
   gap: 5px;
   align-items: center;
 }
+
+.zen-indicator {
+  color: var(--default-text);
+  cursor: default;
+  font-size: 16px;
+  margin: 10px;
+}
+
+.zen-mode {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+

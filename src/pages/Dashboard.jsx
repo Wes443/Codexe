@@ -12,11 +12,15 @@ function Dashboard() {
     const [ lines, setLines ] = useState(5);
     const [ language, setLanguage ] = useState("Python");
     const [ zen, setZen ] = useState(false);
+    const [ userUid, setUserUid ] = useState("");
 
     //check if the user is signed in or a guest
     useEffect(() => {
         if(loading) return;
-        if(user && userDoc) setIsGuest(false);
+        if(user && userDoc) {
+            setIsGuest(false);
+            setUserUid(user.uid);
+        }
 
     }, [user, userDoc, loading]);
 
@@ -25,7 +29,7 @@ function Dashboard() {
             <HomeButton />
             <AccountBar isGuest={isGuest}/>
             <TypingNavbar lines={lines} setLines={setLines} language={language} setLanguage={setLanguage} zen={zen} setZen={setZen} />
-            <TypingText lines={lines} language={language} zen={zen} />
+            <TypingText lines={lines} language={language} zen={zen} userUid={userUid} />
         </div>
     );
 }

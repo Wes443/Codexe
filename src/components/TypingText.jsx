@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../css/TypingText.module.css";
 import { CursorIcon, ClockIcon } from "../icons";
+import { addSession } from "../../firebase/functions/sessions";
+import { Timestamp } from "firebase/firestore";
 
-export default function TypingText({ lines, language, zen }) {
+export default function TypingText({ lines, language, zen, userUid }) {
     const [input, setInput] = useState("");
     const [mistakes, setMistakes] = useState(0);
     const [text, setText] = useState("");
@@ -35,6 +37,15 @@ export default function TypingText({ lines, language, zen }) {
         return () => {document.removeEventListener("mousedown", handleUnfocus);};
 
     }, []);
+
+    useEffect(() => {
+        if(!zen) return;
+
+        if (typingAreaRef.current) {
+            typingAreaRef.current.scrollTop =
+                typingAreaRef.current.scrollHeight;
+        }
+    }, [input]);
 
     //run when the text length changes
     useEffect(() => {
@@ -71,6 +82,10 @@ export default function TypingText({ lines, language, zen }) {
 
         //clear user input
         setInput("");
+        //turn off watch
+        setWatchRunning(false);
+        //reset watch
+        setSeconds(0);
 
     }, [lines, language, zen]);
 
@@ -157,23 +172,6 @@ export default function TypingText({ lines, language, zen }) {
 
             setInput(value);
 
-            let nlines = 0;
-            for (let i = 0; i < value.length; i++){
-                if(value[i] == '\n'){
-                    nlines++;
-                }
-            }
-
-            if(nlines >= 14){
-                setInput(input);
-            }
-
-            if(nlines >= 13 && (value.length - value.lastIndexOf("\n") >= 48)){
-                setInput(input);
-            }
-            
-            //46 * 14
-            if(value.length >= 644) setInput(input);
         }
     };
 
@@ -195,6 +193,14 @@ export default function TypingText({ lines, language, zen }) {
                 }
             }  
 
+
+            //if the user reaches the end of the text
+            if(value.length === text.length){
+                //stop the timer
+                setWatchRunning(false);
+                handleSession(errors, value);
+            }
+
             //update the use states
             setInput(value);
             setMistakes(errors);
@@ -206,22 +212,73 @@ export default function TypingText({ lines, language, zen }) {
         }
     };
 
+    //function to handle when a session is complete
+    const handleSession = async(errors, values) => {
+        //clear user input
+        setInput("");
+        //reset watch
+        setSeconds(0);
+
+        //raw wpm = (chars typed) / (5 * time taken(in MINUTES))
+        const rawWpm = input.length / (5 * (seconds / 60.0));
+        //accuracy = (correct chars typed) / (total chars typed) * 100
+        const accuracy = ((input.length - errors) / (input.length * 1.0)) * 100;
+        //std wpm = raw wpm * accuracy
+        const stdWpm = rawWpm * (accuracy / 100);
+        //correct chars typed
+        const correct = input.length - errors;
+
+        //save the session if the user is logged in
+        if(userUid) {
+            const session = {
+                userUid: userUid,
+                accuracy: accuracy,
+                stdWpm: stdWpm,
+                rawWpm: rawWpm,
+                language: language,
+                lines: lines,
+                correct: correct,
+                incorrect: errors,
+                time: seconds,
+                dateAchieve: Timestamp.now(),
+            }
+
+            const res = await addSession(session);
+
+            if(!res){
+                console.log("failed to save session");
+            }
+        }
+
+        navigate("/session-results", {
+            state: {
+                accuracy: accuracy,
+                stdWpm: stdWpm,
+                rawWpm: rawWpm,
+                language: language,
+                lines: lines,
+                correct: correct,
+                incorrect: errors
+            }
+        });
+    }
+
     return (
         <div className={styles["typing-container"]}>
-            <div className={styles["text-info-container"]}>
-                {!zen && <span className={styles["watch"]}>
+            {!zen && <div className={styles["text-info-container"]}>
+                <span className={styles["watch"]}>
                     <ClockIcon style={{width: "20", height: "20"}}/>
                     <p style={{color: "var(--accent-text)"}}>{seconds}</p>
                     <p style={{color: "var(--hover-text)"}}>|</p>
-                </span>}
-                <p className={styles["current-mode"]}>mode: {mode}</p>
-            </div>
+                </span>
+                <p className={styles["current-mode"]}>{mode}</p>
+            </div>}
             
             <div className={styles["text-container"]}>
-                <pre className={styles["text"]} onClick={focusInput} ref={typingAreaRef} >
+                <pre className={styles["text"]} style={{width: zen ? "50%" : "fit-content", height: zen ? "80%" : "fit-content"}} onClick={focusInput} ref={typingAreaRef} >
                     {/* blur overlay when typing area is unfocused */}
                     {!focus && <div className={styles["blur-overlay"]}>
-                        <CursorIcon style={{width: "24", height: "24", color: "var(--hover-text)"}}/>
+                        <CursorIcon style={{width: "24", height: "24", color: "white"}}/>
                         <p>click to focus</p>
                     </div>}
 
@@ -253,10 +310,24 @@ export default function TypingText({ lines, language, zen }) {
                             </span>
                         );
                     })}
+
+
+                    {/* display each typed character (zen mode) */}
+                    {zen && <div className={styles["zen-mode"]}>
+                        {input.split(""). map((char, index) => {
+                            //display the text
+                            return (
+                                <span key={index} style={{color: "var(--default-text)"}}>{char}</span>
+                            );
+                        })}
+
+                        {input.length === 0 && <p>start typing...</p>}
+                    </div>}
                 </pre>
             </div>
 
-            <p style={{margin: "10px"}}>test</p>
+            {!zen && <p style={{margin: "10px"}}>test</p>}
+            {zen && <p className={styles["zen-indicator"]}>press zen again to switch modes</p>}
             
             { /* invisible input box */}
             <textarea
