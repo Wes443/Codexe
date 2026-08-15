@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../css/TypingText.module.css";
-import { CursorIcon } from "../icons";
+import { CursorIcon, ClockIcon } from "../icons";
 
 export default function TypingText({ lines, language, zen }) {
     const [input, setInput] = useState("");
@@ -10,7 +10,7 @@ export default function TypingText({ lines, language, zen }) {
     const [focus, setFocus] = useState(true);
     const [seconds, setSeconds] = useState(0);
     const [watchRunning, setWatchRunning] = useState(false);
-
+    const [mode, setMode] = useState("");
     const inputRef = useRef(null);
     const typingAreaRef = useRef(null);
     
@@ -46,9 +46,6 @@ export default function TypingText({ lines, language, zen }) {
         .then((res) => res.text())
         .then((data) => {setText(data.replace(/\r\n/g, "\n"))});
 
-        //reset user input
-        setInput("");
-
     }, [lines]);
 
     //run when the language changes
@@ -61,10 +58,21 @@ export default function TypingText({ lines, language, zen }) {
         .then((res) => res.text())
         .then((data) => {setText(data.replace(/\r\n/g, "\n"))});
 
-        //reset user input
+    }, [language]);
+
+    //run when the mode changes
+    useEffect(() => {
+        if(zen){
+            setMode("Zen");
+            return;
+        }else {
+            setMode(`~${lines} lines ${language}`);
+        }
+
+        //clear user input
         setInput("");
 
-    }, [language]);
+    }, [lines, language, zen]);
 
     //run when the timer status changes
     useEffect(() => {
@@ -199,42 +207,57 @@ export default function TypingText({ lines, language, zen }) {
     };
 
     return (
-        <pre className={styles["typing-container"]} onClick={focusInput} ref={typingAreaRef}>
-           {/* blur overlay when typing area is unfocused */}
-            <div className={styles["blur-overlay"]} style={{display: focus ? "none" : "flex"}}>
-                <CursorIcon />
-                <p>click to focus</p>
+        <div className={styles["typing-container"]}>
+            <div className={styles["text-info-container"]}>
+                {!zen && <span className={styles["watch"]}>
+                    <ClockIcon style={{width: "20", height: "20"}}/>
+                    <p style={{color: "var(--accent-text)"}}>{seconds}</p>
+                    <p style={{color: "var(--hover-text)"}}>|</p>
+                </span>}
+                <p className={styles["current-mode"]}>mode: {mode}</p>
+            </div>
+            
+            <div className={styles["text-container"]}>
+                <pre className={styles["text"]} onClick={focusInput} ref={typingAreaRef} >
+                    {/* blur overlay when typing area is unfocused */}
+                    {!focus && <div className={styles["blur-overlay"]}>
+                        <CursorIcon style={{width: "24", height: "24", color: "var(--hover-text)"}}/>
+                        <p>click to focus</p>
+                    </div>}
+
+                    {/* iterate through and display each character in the text */}
+                    {!zen && text.split("").map((char, index) => {
+                        let color = "var(--default-text)";
+                        let cursor = "cursor-hidden";
+                        
+                        //if the user typed the current char
+                        if (index < input.length) {
+                            //check if the current character typed matches the text
+                            if (input[index] === char){
+                                color = "var(--hover-text)"
+                            }else {
+                                if(char === " "){ char = '_'; }
+                                color = "var(--error-text)";
+                            }
+                        }
+                        
+                        //reveal the cursor 
+                        if (focus && index === input.length) {
+                            cursor = "cursor-visible";
+                        }
+
+                        //display the text and cursor
+                        return (
+                            <span key={index} style={{color: color}}>
+                                <span className={styles[cursor]}></span>{char}
+                            </span>
+                        );
+                    })}
+                </pre>
             </div>
 
-            {/* iterate through each character in the text */}
-            {!zen && text.split("").map((char, index) => {
-                let color = "var(--default-text)";
-                let cursor = "cursor-hidden";
-                
-                //if the user typed the current char
-                if (index < input.length) {
-                    //check if the current character typed matches the text
-                    if (input[index] === char){
-                        color = "var(--hover-text)"
-                    }else {
-                        if(char === " "){ char = '_'; }
-                        color = "var(--error-text)";
-                    }
-                }
-                
-                //reveal the cursor 
-                if (focus && index === input.length) {
-                    cursor = "cursor-visible";
-                }
-
-                //display the text and cursor
-                return (
-                    <span key={index} style={{color: color}}>
-                        <span className={styles[cursor]}></span>{char}
-                    </span>
-                );
-            })}
-
+            <p style={{margin: "10px"}}>test</p>
+            
             { /* invisible input box */}
             <textarea
                 className={styles["invisible-input"]}
@@ -243,6 +266,6 @@ export default function TypingText({ lines, language, zen }) {
                 onKeyDown={handleSpecialKeyPress}
                 onChange={handleKeyPress}
             />
-        </pre>
+        </div>
     );
 }
