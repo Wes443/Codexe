@@ -1,0 +1,5 @@
+def isPalindrome(s):
+	for i, c in enumerate(s):
+		if c != s[len(s) - 1 - i]:
+			return False
+	return True

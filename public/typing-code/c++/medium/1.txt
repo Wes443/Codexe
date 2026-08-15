@@ -1,0 +1,10 @@
+vector<int> missingNum(const vector<int>& nums) {
+	unordered_set<int> numSet(nums.begin(), nums.end());
+	vector<int> missing;
+	
+	for(int i = 1; i < nums.size() + 1; i++) {
+		if(numSet.find(i) == numSet.end())
+			missing.push_back(i);
+	}
+	return missing;
+}

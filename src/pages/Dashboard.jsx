@@ -4,6 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 import HomeButton from "../components/HomeButton";
 import AccountBar from "../components/AccountBar";
 import TypingNavbar from "../components/TypingNavbar";
+import TypingText from "../components/TypingText";
 
 function Dashboard() {
     const { user, userDoc, loading } = useAuth();
@@ -23,7 +24,8 @@ function Dashboard() {
         <div className={styles["window"]}>
             <HomeButton />
             <AccountBar isGuest={isGuest}/>
-            <TypingNavbar />
+            <TypingNavbar lines={lines} setLines={setLines} language={language} setLanguage={setLanguage} zen={zen} setZen={setZen} />
+            <TypingText lines={lines} language={language} zen={zen} />
         </div>
     );
 }

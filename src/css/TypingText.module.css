@@ -1,0 +1,61 @@
+p {
+    color: white;
+}
+
+.typing-container {
+    cursor: pointer;
+    white-space: pre-wrap;
+    font-size: 1rem;
+    tab-size: 4;
+    margin: 0px;
+    position: relative;
+}
+
+.invisible-input {
+    opacity: 0;
+    position: absolute;
+}
+
+.blur-overlay {
+    background-color: rgba(22, 24, 33, 0.1);
+    backdrop-filter: blur(3px);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* cursor attributes */
+.cursor-visible, .cursor-hidden {
+    display: inline-block;
+    width: 2px;
+    height: 0.8em;
+}
+
+.cursor-visible {
+    background: white;
+    animation: blink 1s infinite;
+}
+
+.cursor-hidden {
+    background: transparent;
+}
+
+/* cursor animation keyframes */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

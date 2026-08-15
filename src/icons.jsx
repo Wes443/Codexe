@@ -4,6 +4,7 @@ import LogoutSvg from "./assets/logout-icon.svg?react";
 import LinesSvg from "./assets/lines-icon.svg?react";
 import CodeSvg from "./assets/code-icon.svg?react";
 import ZenSvg from "./assets/zen-icon.svg?react";
+import CursorSvg from "./assets/cursor-icon.svg?react";
 
 export function LogoIcon(props) {
     return <LogoSvg {...props} />;
@@ -27,4 +28,8 @@ export function CodeIcon(props) {
 
 export function ZenIcon(props) {
     return <ZenSvg {...props} />;
+}
+
+export function CursorIcon(props) {
+    return <CursorSvg {...props} />
 }

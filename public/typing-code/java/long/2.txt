@@ -1,0 +1,14 @@
+public int countVowels(String text){
+	String vowels = "aeiou";
+	int count = 0;
+	
+	if (text.length() == 0) return 0;
+	
+	text = text.toLowerCase();
+	
+	for(char c : text.toCharArray()){
+		if(c == ' ') continue;
+		if(vowel.indexOf(c) != -1) count++;
+	}
+	return count;
+}

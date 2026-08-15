@@ -1,0 +1,10 @@
+public Boolean judgeCircle(String moves){
+	int[] pos = {0, 0};
+	for(char c: moves.toCharArray()){
+		if(c == 'U') pos[1] += 1;
+		else if(c == 'D') pos[1] -= 1;
+		else if(c == 'R') pos[0] += 1;
+		else pos[0] -= 1;
+	}
+	return (pos[0] == 0 && pos[1] == 0) ? true : false;
+}

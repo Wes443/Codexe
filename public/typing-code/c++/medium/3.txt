@@ -1,0 +1,11 @@
+list<bool> candies(list<int> c, int extra){
+	list<bool> res;
+	auto g = max_element(c.begin(), c.end());
+	int greatest = *g;
+	
+	for (int candies : c){
+		if(candies + extra >= greatest) res.push_back(true);
+		else res.push_back(false);
+	}
+	return res;
+}

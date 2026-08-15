@@ -1,0 +1,5 @@
+def search(text, letter):
+	for i, c in enumerate(text):
+		if c == letter:
+			return i
+	return -1

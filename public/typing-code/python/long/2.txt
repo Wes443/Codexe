@@ -1,0 +1,16 @@
+def countVowels(text):
+	vowels = "aeiou"
+	count = 0
+	
+	if len(text) == 0:
+		return 0
+	
+	text = text.lower()
+	
+	for char in text:
+		if char == " ":
+			continue
+
+		if char in vowels:
+			count += 1
+	return count
