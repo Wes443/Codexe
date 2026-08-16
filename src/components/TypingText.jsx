@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../css/TypingText.module.css";
-import { CursorIcon, ClockIcon } from "../icons";
+import { CursorIcon, ClockIcon, RestartIcon, NextIcon } from "../icons";
 import { addSession } from "../../firebase/functions/sessions";
 import { Timestamp } from "firebase/firestore";
 
@@ -13,8 +13,13 @@ export default function TypingText({ lines, language, zen, userUid }) {
     const [seconds, setSeconds] = useState(0);
     const [watchRunning, setWatchRunning] = useState(false);
     const [mode, setMode] = useState("");
+    const [reset, setReset] = useState(false);
+    const [next, setNext] = useState(false);
+    const [hover, setHover] = useState("");
+
     const inputRef = useRef(null);
     const typingAreaRef = useRef(null);
+    const keysPressed = useRef({});
     
     const navigate = useNavigate();
 
@@ -32,12 +37,38 @@ export default function TypingText({ lines, language, zen, userUid }) {
             }
         }
 
-        document.addEventListener("mousedown", handleUnfocus);
+        //handle keyboard shortcuts for reset and next 
+        const handleKeyDown = (e) => {
+            keysPressed.current[e.key] = true;
 
-        return () => {document.removeEventListener("mousedown", handleUnfocus);};
+            if (keysPressed.current["Control"] && keysPressed.current["Enter"]) {
+                e.preventDefault();
+                setNext(prev => !prev);
+            }
+
+            if (keysPressed.current["Control"] && keysPressed.current["r"]) {
+                e.preventDefault();
+                setReset(prev => !prev);
+            }
+        };
+
+        const handleKeyUp = (e) => {
+            delete keysPressed.current[e.key];
+        };
+
+        document.addEventListener("mousedown", handleUnfocus);
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+
+        return () => {
+            document.removeEventListener("mousedown", handleUnfocus);
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+        };
 
     }, []);
 
+    //automatically scroll when the text overflows (zen mode)
     useEffect(() => {
         if(!zen) return;
 
@@ -112,6 +143,33 @@ export default function TypingText({ lines, language, zen, userUid }) {
         return () => clearInterval(interval);
     }, [watchRunning]);
 
+    //go to the next code
+    useEffect(() => {
+        if(!next) return;
+        setNext(false);
+        setWatchRunning(false);
+        setSeconds(0);
+        setInput("");
+
+        //get the text length
+        const size = lines === 5 ? "short" : lines === 10 ? "medium" : "long";
+
+        //update the typing text
+        fetch(`typing-code/${language.toLowerCase()}/${size}/${getRandomInt()}.txt`)
+        .then((res) => res.text())
+        .then((data) => {setText(data.replace(/\r\n/g, "\n"))});
+
+    }, [next]);
+
+    //reset the current session
+    useEffect(() => {
+        if(!reset) return;
+        setReset(false);
+        setWatchRunning(false);
+        setSeconds(0);
+        setInput("");
+    }, [reset])
+
     //function to get a random number (1 - MAX_TYPING_CODE)
     function getRandomInt() {
         return Math.floor(Math.random() * NUM_TYPING_CODE) + 1;
@@ -153,26 +211,16 @@ export default function TypingText({ lines, language, zen, userUid }) {
 
             //if the user reaches the end of the text
             if(value.length === text.length){
-                //stop the timer
                 setWatchRunning(false);
                 handleSession(errors, value);
             }
 
-            //update the use states
-            setInput(value);
+            //update mistakes
             setMistakes(errors);
-        
-        //if in zen mode 
-        }else{
-            //stop the stopwatch
-            if(watchRunning){
-                setWatchRunning(false);
-                setSeconds(0);
-            }
-
-            setInput(value);
-
         }
+
+        //update typed input
+        setInput(value);
     };
 
     //function to handle special key presses within the typing box
@@ -193,10 +241,8 @@ export default function TypingText({ lines, language, zen, userUid }) {
                 }
             }  
 
-
             //if the user reaches the end of the text
             if(value.length === text.length){
-                //stop the timer
                 setWatchRunning(false);
                 handleSession(errors, value);
             }
@@ -250,6 +296,7 @@ export default function TypingText({ lines, language, zen, userUid }) {
             }
         }
 
+        //navigate to the session result page
         navigate("/session-results", {
             state: {
                 accuracy: accuracy,
@@ -258,7 +305,8 @@ export default function TypingText({ lines, language, zen, userUid }) {
                 language: language,
                 lines: lines,
                 correct: correct,
-                incorrect: errors
+                incorrect: errors,
+                time: seconds,
             }
         });
     }
@@ -311,7 +359,6 @@ export default function TypingText({ lines, language, zen, userUid }) {
                         );
                     })}
 
-
                     {/* display each typed character (zen mode) */}
                     {zen && <div className={styles["zen-mode"]}>
                         {input.split(""). map((char, index) => {
@@ -326,7 +373,30 @@ export default function TypingText({ lines, language, zen, userUid }) {
                 </pre>
             </div>
 
-            {!zen && <p style={{margin: "10px"}}>test</p>}
+            {!zen && <div className={styles["bottom-bar"]}>
+                <div style={{display: "flex", gap: "10px"}}>
+                    <span 
+                        className={styles["restart"]}
+                        onMouseEnter={() => setHover("restart")}
+                        onMouseLeave={() => setHover("")}
+                        onClick={() => setReset(!reset)}
+                    >
+                        <RestartIcon />
+                    </span>
+                    
+                    <span 
+                        className={styles["next"]}
+                        onMouseEnter={() => setHover("next")}
+                        onMouseLeave={() => setHover("")}
+                        onClick={() => setNext(!next)}
+                    >
+                        <NextIcon />
+                    </span>
+                </div>
+
+                <p style={{opacity: hover === "" ? "0" : "100"}} className={styles["kb-shortcut"]}>{hover === "restart" ? "restart [ctrl + r]" : hover === "next" ? "next [ctrl + enter]" : "null"}</p>
+            </div>}
+
             {zen && <p className={styles["zen-indicator"]}>press zen again to switch modes</p>}
             
             { /* invisible input box */}
