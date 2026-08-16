@@ -1,0 +1,9 @@
+def candies(candies, extraCandies):
+	greatest = max(candies)
+	res = []
+	for c in candies:
+		if c + extraCandies >= greatest:
+			res.append(True)
+		else:
+			res.append(False)
+	return res

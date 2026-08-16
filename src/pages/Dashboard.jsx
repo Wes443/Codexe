@@ -1,23 +1,35 @@
 import styles from "../css/Dashboard.module.css";
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
-import { useNavigate } from "react-router-dom";
+import HomeButton from "../components/HomeButton";
+import AccountBar from "../components/AccountBar";
+import TypingNavbar from "../components/TypingNavbar";
+import TypingText from "../components/TypingText";
 
 function Dashboard() {
-    const { user, userDoc } = useAuth();
+    const { user, userDoc, loading } = useAuth();
+    const [ isGuest, setIsGuest ] = useState(true);
+    const [ lines, setLines ] = useState(5);
+    const [ language, setLanguage ] = useState("Python");
+    const [ zen, setZen ] = useState(false);
+    const [ userUid, setUserUid ] = useState("");
 
-    const navigate = useNavigate();
-    
-	const handleSignOut = async () => {
-		await signOut(auth);
-		navigate("/login");
-	};
+    //check if the user is signed in or a guest
+    useEffect(() => {
+        if(loading) return;
+        if(user && userDoc) {
+            setIsGuest(false);
+            setUserUid(user.uid);
+        }
+
+    }, [user, userDoc, loading]);
 
     return (
-        <div>
-            {userDoc && <p>{userDoc.firstName}</p>}
-            {user && <button onClick={handleSignOut}>Sign Out</button>}
+        <div className={styles["window"]}>
+            <HomeButton />
+            <AccountBar isGuest={isGuest}/>
+            <TypingNavbar lines={lines} setLines={setLines} language={language} setLanguage={setLanguage} zen={zen} setZen={setZen} />
+            <TypingText lines={lines} language={language} zen={zen} userUid={userUid} />
         </div>
     );
 }

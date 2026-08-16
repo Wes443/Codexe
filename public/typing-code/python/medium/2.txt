@@ -1,0 +1,8 @@
+def judgeCircle(moves):
+	pos = [0, 0]
+	for move in moves:
+		if move == 'U': pos[1] += 1
+		elif move == 'D': pos[1] -= 1
+		elif move == 'R': pos[0] += 1
+		else: pos[0] -= 1
+	return True if pos[0] == 0 and pos[1] == 0 else False

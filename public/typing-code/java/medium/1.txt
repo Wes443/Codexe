@@ -1,0 +1,10 @@
+public List<Integer> missingNum(List<Integer> nums) {
+	Set<Integer> numSet = new HashSet<>();
+	List<Integer> missing = new LinkedList<>();
+	
+	for(int i = 1; i < nums.size() + 1; i++){
+		if(!nums.contains(i))
+			missing.add(i);
+	}
+	return missing;
+}

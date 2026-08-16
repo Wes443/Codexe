@@ -1,0 +1,146 @@
+.typing-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.invisible-input {
+    opacity: 0;
+    position: absolute;
+}
+
+.blur-overlay {
+    background-color: rgba(22, 24, 33, 0.1);
+    backdrop-filter: blur(3px);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* cursor attributes */
+.cursor-visible, .cursor-hidden {
+    display: inline-block;
+    width: 2px;
+    height: 0.8em;
+}
+
+.cursor-visible {
+    background: white;
+    animation: blink 1s infinite;
+}
+
+.cursor-hidden {
+    background: transparent;
+}
+
+/* cursor animation keyframes */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.text {
+    position: relative;
+    cursor: pointer;
+    white-space: pre-wrap;
+    tab-size: 4;
+    font-size: min(5cqw, 5cqh, 40px);
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.text::-webkit-scrollbar {
+    display: none;
+}
+
+.text-container {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    container-type: size;
+}
+
+.current-mode {
+  font-size: 16px;
+  color: var(--hover-text);
+  margin-left: 5px;
+}
+
+.text-info-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding-top: 20px;
+}
+
+.watch {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.zen-indicator {
+  color: var(--default-text);
+  cursor: default;
+  font-size: 16px;
+  margin: 10px;
+}
+
+.zen-mode {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.bottom-bar{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.restart {
+  color: var(--default-text);
+  cursor: pointer;
+}
+
+.restart:hover {
+  color: var(--hover-text);
+}
+
+.next {
+  color: var(--default-text);
+  cursor: pointer;
+}
+
+.next:hover {
+  color: var(--hover-text);
+}
+
+.kb-shortcut {
+  font-size: 16px;
+  color: var(--default-text);
+}
+

@@ -1,0 +1,6 @@
+public int search(String text, char letter){
+	for(int i = 0; i < text.length(); i++){
+		if(text.charAt(i) == letter) return i;
+	}
+	return -1;
+}

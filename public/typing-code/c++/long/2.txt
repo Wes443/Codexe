@@ -1,0 +1,15 @@
+int countVowels(string text){
+	string vowels = "aeiou";
+	int count = 0;
+	
+	if(text.length() == 0) return 0;
+	
+	for(char c : text){
+		if(c == ' ') continue;
+		
+		if(vowel.find(tolower(c)) != string::npos){
+			count++;
+		}
+	}
+	return count;
+}

@@ -27,10 +27,10 @@ function Login() {
 		try {
 			if (creatingAcc) await createUserWithEmailAndPassword(auth, email, password);
 			else await signInWithEmailAndPassword(auth, email, password);
+			navigate("/");
 
-			navigate("/setup");
 		} catch (err) {
-			setError("Invalid email or password!");
+			setError("Login failed.");
 		}
 	};
 
@@ -38,11 +38,13 @@ function Login() {
 		try {
 			const provider = new GoogleAuthProvider();
 			await signInWithPopup(auth, provider);
-			navigate("/setup");
+			navigate("/");
 		} catch (err) {
 			setError("Google sign-in failed.");
 		}
 	};
+
+    if(loading || user || userDoc) return;
 
     return (
         <div>

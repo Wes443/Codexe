@@ -1,0 +1,10 @@
+public List<Boolean> candies(List<Integer> c, int extra){
+	int greatest = Collections.max(c);
+        List<Boolean> res = new ArrayList<>();
+        
+        for(int candies : c){
+            if(candies + extra >= greatest) res.add(true);
+            else res.add(false);
+        }
+        return res;
+}

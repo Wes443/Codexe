@@ -28,7 +28,7 @@ export interface Session {
     stdWpm: Int16Array;
     rawWpm: Int16Array;
     language: string;
-    textLen: Int16Array;
+    lines: Int16Array;
     correct: Int16Array;
     incorrect: Int16Array;
     time: Int16Array;
