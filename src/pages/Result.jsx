@@ -14,11 +14,11 @@ function Result() {
     const location = useLocation();
 
     //redirect to dashboard if no session state
-    // useEffect(() => {
-    //     if(!location.state){
-    //         navigate("/", {replace: true});
-    //     }
-    // }, []);
+    useEffect(() => {
+        if(!location.state){
+            navigate("/", {replace: true});
+        }
+    }, []);
 
     //check if the user is signed in or a guest
     useEffect(() => {
@@ -28,17 +28,7 @@ function Result() {
     }, [user, userDoc, loading]);
 
     //get all the session details from the state
-    // const { accuracy, stdWpm, rawWpm, language, lines, correct, incorrect, time } = location.state || {};
-
-    //temp vars (for testing)
-    const accuracy = 98.2;
-    const stdWpm = 60;
-    const rawWpm = 60;
-    const language = "Python";
-    const lines = 5;
-    const correct = 25;
-    const incorrect = 2;
-    const time = 67;
+    const { accuracy, stdWpm, rawWpm, language, lines, correct, incorrect, time } = location.state || {};
 
     return (
         <div className={styles["session-container"]}>
