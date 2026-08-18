@@ -8,6 +8,7 @@ import CursorSvg from "./assets/cursor-icon.svg?react";
 import ClockSvg from "./assets/clock-icon.svg?react";
 import RestartSvg from "./assets/restart-icon.svg?react";
 import NextSvg from "./assets/next-icon.svg?react";
+import LockSvg from "./assets/lock-icon.svg?react";
 
 export function LogoIcon(props) {
     return <LogoSvg {...props} />;
@@ -47,4 +48,8 @@ export function RestartIcon(props) {
 
 export function NextIcon(props) {
     return <NextSvg {...props} />
+}
+
+export function LockIcon(props){
+    return <LockSvg {...props} />
 }
