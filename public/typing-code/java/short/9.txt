@@ -1,0 +1,4 @@
+public int findMiddle(int[] nums) {
+	int idx = nums.length / 2;
+	return nums[idx];
+}

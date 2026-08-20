@@ -1,0 +1,12 @@
+int minStartValue(vector<int>& nums) {
+	int startVal = 1;
+	while (true) {
+		int prevSum = startVal + nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			if (prevSum < 1) break;
+			prevSum += nums[i];
+		}
+		if (prevSum >= 1) return startVal;
+		startVal++;
+	}
+}

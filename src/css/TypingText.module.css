@@ -26,6 +26,12 @@
     gap: 10px;
 }
 
+.blur-overlay p {
+  font-family: inherit;
+  color: white;
+  font-size: 20px;
+}
+
 /* cursor attributes */
 .cursor-visible, .cursor-hidden {
     display: inline-block;

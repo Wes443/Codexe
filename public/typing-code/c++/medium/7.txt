@@ -1,0 +1,7 @@
+vector<int> findDisappearedNumbers(vector<int>& nums) {
+	unordered_set<int> numSet(nums.begin(), nums.end());
+	vector<int> arr;
+	for (int i = 1; i <= nums.size(); i++)
+		if (!numSet.count(i)) arr.push_back(i);
+	return arr;
+}

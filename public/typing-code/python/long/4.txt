@@ -1,0 +1,12 @@
+def minStartValue(nums):
+	startVal = 1
+	while True:
+		prevSum = startVal + nums[0]
+		for idx in range(1, len(nums)):
+			if(prevSum < 1):
+				break
+			prevSum += nums[idx]
+		if(prevSum >= 1):
+			break
+		startVal += 1
+	return startVal

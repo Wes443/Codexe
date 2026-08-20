@@ -1,0 +1,7 @@
+def firstUniqChar(s):
+	for char in s:
+		s_2 = s
+		s_2 = s_2.replace(char, '', 1)
+		if char not in s_2:
+			return s.index(char)
+	return -1

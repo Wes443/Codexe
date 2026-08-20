@@ -1,0 +1,8 @@
+def largestAltitude(gain):
+	highest = 0
+	net_gain = 0
+	for i in range(len(gain)):
+		net_gain += gain[i]
+		if net_gain > highest:
+			highest = net_gain
+	return highest

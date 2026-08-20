@@ -1,0 +1,8 @@
+int firstUniqChar(string s) {
+	for (char c : s) {
+ 		string s2 = s;
+		s2.erase(s2.find(c), 1);
+		if (s2.find(c) == string::npos) return s.find(c);
+	}
+	return -1;
+}

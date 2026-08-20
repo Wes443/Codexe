@@ -1,0 +1,7 @@
+def findDisappearedNumbers(nums):
+	num_set = set(nums)
+	arr = []
+	for i in range(1, len(nums) + 1):
+		if i not in num_set:
+			arr.append(i)
+	return arr

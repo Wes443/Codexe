@@ -1,0 +1,12 @@
+int numberOfBeams(vector<string>& bank) {
+	vector<int> devices;
+	for (string row : bank) {
+ 		int count = 0;
+		for (char c : row) count += c == '1';
+		if (count) devices.push_back(count);
+	}
+	int beams = 0;
+	for (int i = 0; i < devices.size() - 1; i++)
+		beams += devices[i] * devices[i + 1];
+	return beams;
+}

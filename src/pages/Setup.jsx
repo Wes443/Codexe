@@ -3,14 +3,18 @@ import { useAuth } from "../auth/AuthContext";
 import { updateUser } from "../../firebase/functions/users";
 import { useNavigate } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
-import styles from "../css/Setup.module.css";
+import styles from "../css/Login.module.css";
 import { auth } from "../../firebase/firebase";
 import { User } from "../../firebase/types";
+import Input from "../components/Input";
+import AccountBar from "../components/AccountBar";
+import HomeButton from "../components/HomeButton";
 
 function Setup() {
     const { user, userDoc, loading } = useAuth();
     const [ firstName, setFirstName ] = useState("");
     const [ lastName, setLastName ] = useState("");
+    const [ error, setError ] = useState("");
     const navigate = useNavigate();
 
     //redirect to login page if no user
@@ -24,7 +28,10 @@ function Setup() {
     //function to handle setup completion 
     const handleSubmit = async() => {
 
-        if(!firstName) return;
+        if(!firstName){
+            setError("First name is required.")
+            return;
+        }
         
         const status = await updateUser(user.uid, {
             uid: user.uid,
@@ -42,22 +49,27 @@ function Setup() {
     }
 
     return(
-        <div>
-            <input 
-                type="text"
-                placeholder="e.g. Jane"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-            />
+        <div className={styles["window"]}>
+            <HomeButton />
+            <AccountBar isGuest={true} />
+            <div className={styles["content"]}>
+                <Input
+                    type="text"
+                    placeholder="First name*"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                />
 
-            <input 
-                type="text"
-                placeholder="e.g. Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-            />
+                <Input
+                    type="text"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                />
 
-            <button onClick={handleSubmit}>submit</button>
+                <button onClick={handleSubmit}>Submit</button>
+                {error && <p className={styles["error"]}>{error}</p>}
+            </div>
         </div>
     );
 }

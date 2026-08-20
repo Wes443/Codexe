@@ -16,6 +16,7 @@ export default function TypingText({ lines, language, zen, userUid }) {
     const [reset, setReset] = useState(false);
     const [next, setNext] = useState(false);
     const [hover, setHover] = useState("");
+    const [currTextNum, setCurrTextNum] = useState(0);
 
     const inputRef = useRef(null);
     const typingAreaRef = useRef(null);
@@ -24,7 +25,7 @@ export default function TypingText({ lines, language, zen, userUid }) {
     const navigate = useNavigate();
 
     const MAX_TIME = 999;
-    const NUM_TYPING_CODE = 3;
+    const NUM_TYPING_CODE = 10;
 
     //run on initial mount
     useEffect(() => {
@@ -172,7 +173,15 @@ export default function TypingText({ lines, language, zen, userUid }) {
 
     //function to get a random number (1 - MAX_TYPING_CODE)
     function getRandomInt() {
-        return Math.floor(Math.random() * NUM_TYPING_CODE) + 1;
+        let num;
+        
+        do{
+            num = Math.floor(Math.random() * NUM_TYPING_CODE) + 1;
+        }while(num === currTextNum);
+
+        setCurrTextNum(num);
+        return num;
+        
     }
 
     //function to manually focus input box

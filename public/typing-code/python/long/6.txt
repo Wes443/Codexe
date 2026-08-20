@@ -1,0 +1,12 @@
+def topKFrequent(words, k):
+	dict_ = {}
+	for word in words:
+		dict_[word] = dict.get(word, 0) + 1
+	arr = []
+	for key, val in dict_.items():
+		arr.append((-val, key))
+	arr.sort()
+	res = []
+	for i in range(k):
+		res.append(arr[i][1])
+	return res

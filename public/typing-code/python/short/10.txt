@@ -1,0 +1,4 @@
+def firstVowel(s)
+	for char in word:
+		if char in "aeiou":
+			return char
