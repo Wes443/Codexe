@@ -1,0 +1,12 @@
+public int numberOfBeams(String[] bank) {
+	int beams = 0;
+	int prev = 0;
+	for (String row : bank) {
+		int devices = row.replace("0", "").length();
+		if (devices > 0) {
+			beams += prev * devices;
+ 			prev = devices;
+		}
+	}
+	return beams;
+}

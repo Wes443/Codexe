@@ -1,0 +1,10 @@
+vector<string> topKFrequent(vector<string>& words, int k) {
+	map<string, int> freq;
+	for (string word : words) freq[word]++;
+	vector<pair<int, string>> arr;
+	for (auto& [word, count] : freq) arr.push_back({-count, word});
+	sort(arr.begin(), arr.end());
+	vector<string> res;
+	for (int i = 0; i < k; i++) res.push_back(arr[i].second);
+	return res;
+}

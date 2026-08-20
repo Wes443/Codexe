@@ -1,0 +1,5 @@
+char firstVowel(string s) {
+	for (char c : s)
+		if (string("aeiou").find(c) != string::npos) return c;
+	return '';
+}

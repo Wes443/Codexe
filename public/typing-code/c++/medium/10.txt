@@ -1,0 +1,8 @@
+string removeStars(string s) {
+	string stack;
+	for (char c : s) {
+		if (c == '*') stack.pop_back();
+		else stack += c;
+	}
+	return stack;
+}

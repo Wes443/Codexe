@@ -1,0 +1,3 @@
+def findMiddle(nums):
+	idx = len(nums) // 2
+	return nums[middle]

@@ -1,0 +1,12 @@
+def findMaxAverage(nums, k):
+	curr_sum = 0
+	max_sum = float('-inf')
+	for r_ptr in range(len(nums)):
+		if r_ptr < k:
+			curr_sum += nums[r_ptr]
+		else:
+			max_sum = max(max_sum, curr_sum)
+			curr_sum += nums[r_ptr]
+			curr_sum -= nums[r_ptr - k]
+	max_sum = max(max_sum, curr_sum)
+	return max_sum / k

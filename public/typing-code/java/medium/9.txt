@@ -1,0 +1,8 @@
+public String reverseWords(String s) {
+	String[] words = s.split(" ");
+	String newStr = "";
+	for (String word : words) {
+		newStr += new StringBuilder(word).reverse() + " ";
+	}
+	return newStr.trim();
+}

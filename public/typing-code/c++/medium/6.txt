@@ -1,0 +1,8 @@
+int largestAltitude(vector<int>& gain) {
+	int highest = 0, net_gain = 0;
+	for (int g : gain) {
+		net_gain += g;
+		highest = max(highest, net_gain);
+	}
+	return highest;
+}

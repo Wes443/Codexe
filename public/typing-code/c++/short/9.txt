@@ -1,0 +1,4 @@
+int findMiddle(vector<int>& nums) {
+	int idx = nums.size() / 2;
+	return nums[idx];
+}

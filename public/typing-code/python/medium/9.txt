@@ -1,0 +1,6 @@
+def reverseWords(s):
+	words = s.split(" ")
+	new_str = ""
+	for word in words:
+		new_str += word[::-1] + " "
+	return new_str.strip()

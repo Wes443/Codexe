@@ -1,0 +1,5 @@
+int smallestRangeI(vector<int>& nums, int k) {
+	int res = (*max_element(nums.begin(), nums.end()) - k) -
+		(*min_element(nums.begin(), nums.end()) + k);
+	return max(0, res);
+}

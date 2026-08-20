@@ -1,0 +1,4 @@
+def smallestRangeI(nums):
+	res = (max(nums) - k) - (min(nums) + k)
+	if res < 0: res = 0
+	return res

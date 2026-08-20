@@ -1,0 +1,12 @@
+def groupAnagrams(strs):
+	dict_ = {}
+	for word in strs:
+		sorted_word = ''.join(sorted(word))
+		if sorted_word not in dict_:
+			dict_[sorted_word] = [word]
+		else:
+			dict_[sortede_word].append(word)
+	res = []
+	for val in dict_.values():
+		res.append(val)
+	return res

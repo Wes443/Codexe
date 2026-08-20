@@ -1,0 +1,12 @@
+def numberOfBeams(bank):
+	beams = 0
+	bank_int = []
+	for i in bank:
+		devices = i.count("1")
+		if devices != 0:
+			bank_int.append(devices)
+	if len(bank_int) == 1:
+		return 0
+	for idx in range(len(bank_int) - 1):
+		beams += bank_int[idx] * bank_int[idx + 1]
+	return beams
