@@ -288,8 +288,8 @@ export default function TypingText({ lines, language, zen, userUid }) {
             const session = {
                 userUid: userUid,
                 accuracy: accuracy,
-                stdWpm: stdWpm,
-                rawWpm: rawWpm,
+                stdWpm: Math.round(stdWpm),
+                rawWpm: Math.round(rawWpm),
                 language: language,
                 lines: lines,
                 correct: correct,
@@ -309,8 +309,8 @@ export default function TypingText({ lines, language, zen, userUid }) {
         navigate("/session-results", {
             state: {
                 accuracy: accuracy,
-                stdWpm: stdWpm,
-                rawWpm: rawWpm,
+                stdWpm: Math.round(stdWpm),
+                rawWpm: Math.round(rawWpm),
                 language: language,
                 lines: lines,
                 correct: correct,
