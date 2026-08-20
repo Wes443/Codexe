@@ -34,6 +34,10 @@ button:focus{
     border: 2px solid white;
 }
 
+button:hover{
+    border: 2px solid white;
+}
+
 .toggle {
     display: flex;
     gap: 6px;

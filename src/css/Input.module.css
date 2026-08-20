@@ -25,3 +25,8 @@
     font-size: 20px;
     font-family: inherit;
 }
+
+.input::placeholder{
+    color: var(--default-text);
+    opacity: 50%;
+}
