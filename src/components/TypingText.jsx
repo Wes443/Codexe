@@ -373,11 +373,11 @@ export default function TypingText({ lines, language, zen, userUid }) {
                         {input.split(""). map((char, index) => {
                             //display the text
                             return (
-                                <span key={index} style={{color: "var(--default-text)"}}>{char}</span>
+                                <span key={index}>{char}</span>
                             );
                         })}
 
-                        {input.length === 0 && <p>start typing...</p>}
+                        {input.length === 0 && <span>start typing...</span>}
                     </div>}
                 </pre>
             </div>

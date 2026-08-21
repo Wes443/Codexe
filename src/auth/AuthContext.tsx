@@ -4,7 +4,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase";
 import { User as ApiUser } from "../../firebase/types";
-import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
 	user: User | null;
@@ -76,20 +75,3 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-//navigate to the setup page if the user is authorized but has no Firestore doc
-export function SetupProvider({ children }: { children: React.ReactNode }) {
-	const { loading, user, userDoc } = useAuth();
-	const navigate = useNavigate();
-
-    useEffect(() => {
-		//return early if the auth context or user info is still loading
-        if (loading || (!user && userDoc === undefined)) return;
-
-        if (user && userDoc === null) {
-            navigate("/setup");
-        }
-    }, [loading, user, userDoc, navigate]);
-
-	return <>{children}</>;
-}

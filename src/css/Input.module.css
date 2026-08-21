@@ -3,7 +3,6 @@
     box-sizing: border-box;
     border-radius: 10px;
     align-items: center;
-    gap: 5px;
     line-height: 1;
     border: 1px solid var(--default-text);
     color: var(--default-text);

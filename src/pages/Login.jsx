@@ -7,7 +7,8 @@ import Input from "../components/Input";
 import HomeButton from "../components/HomeButton";
 import AccountBar from "../components/AccountBar";
 import { GoogleLogo } from "../icons";
-import { getUser } from "../../firebase/functions/users";
+import { updateUser, getUser } from "../../firebase/functions/users";
+import { Timestamp } from "firebase/firestore";
 
 import { 
     createUserWithEmailAndPassword,
@@ -20,6 +21,8 @@ function Login() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
 	const [error, setError] = useState("");
 	const [creatingAcc, setCreatingAcc] = useState(false);
     const { user, userDoc, loading } = useAuth();
@@ -33,38 +36,84 @@ function Login() {
     //function for logging in with email and password
 	const handleEmailLogin = async () => {
 		try {
-            //if the user is creating an account, nav to setup page after
-			if (creatingAcc){
-                await createUserWithEmailAndPassword(auth, email, password);
-                navigate("/setup")
+            await signInWithEmailAndPassword(auth, email, password);
+            navigate("/");
             
-            //if the user is logging in, nav to dashboard after
-            }else{
-                await signInWithEmailAndPassword(auth, email, password);
-                navigate("/");
-            } 
 		} catch (err) {
 			setError("Login failed.");
 		}
 	};
 
+    const handleCreateAcc = async() => {
+        try{
+            //check if any of the fields are empty
+            if([email, password, firstName, lastName].some(value => !value.trim())){
+                setError("Some fields are missing.");
+                return;
+            }
+
+            //create a firebase user and get the user uid
+            const firebaseUser = await createUserWithEmailAndPassword(auth, email, password);
+            const userUid = firebaseUser.user.uid;
+            
+            //create a userDoc
+            const status = await updateUser(userUid, {
+                uid: userUid,
+                firstName: firstName,
+                lastName: lastName,
+                joinDate: Timestamp.now(),
+                email: email,
+            });
+
+            //navigate to dashboard upon success, otherwise return an error
+            if(status){
+                navigate("/");
+            }else{
+                setError("Failed to create account.");
+                return;
+            }
+        }catch(error){
+            setError("Failed to create account.");
+            return;
+        }
+    }
+
     //function for logging in with Google
 	const handleGoogleLogin = async () => {
 		try {
 			const provider = new GoogleAuthProvider();
+
+            //get the firebase user and userDoc
 			const firebaseUser = await signInWithPopup(auth, provider);
-
-            //get the userDoc from the firebase user after auth
             const userDoc = await getUser(firebaseUser.user.uid);
-
-            //if there is no doc, then nav to setup, otherwise nav to dashboard
+            
+            //if there is no userDoc
             if(!userDoc){
-                navigate("/setup");
-            }else{
-                navigate("/");
+                //get the displayName
+                const name = firebaseUser.user.displayName?.trim() ?? "";
+                const parts = name ? name.split(/\s+/) : [];
+                const fName = parts[0] ?? "";
+                const lName = parts.slice(1).join(" ");
+
+                //create a userDoc
+                const status = await updateUser(firebaseUser.user.uid, {
+                    uid: firebaseUser.user.uid,
+                    firstName: fName,
+                    lastName: lName,
+                    joinDate: Timestamp.now(),
+                    email: firebaseUser.user.email,
+                });  
+
+                //return an error if failed to create userDoc
+                if(!status){
+                    setError("Failed to create account.");
+                    return;
+                }              
             }
-		} catch (err) {
+            navigate("/");
+		} catch (error) {
 			setError("Google sign-in failed.");
+            return;
 		}
 	};
 
@@ -76,12 +125,25 @@ function Login() {
             <HomeButton />
             <AccountBar isGuest={true} />
             <div className={styles["content"]}>
+                {creatingAcc && <Input
+                    type="text"
+                    placeholder="first name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                />}
+
+                {creatingAcc && <Input
+                    type="text"
+                    placeholder="last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                />}
+
                 <Input
                     type="text"
                     placeholder="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    icon="mail"
                 />
 
                 <Input
@@ -89,9 +151,9 @@ function Login() {
                     placeholder="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    icon="lock"
                 />
-                <button onClick={handleEmailLogin}>{creatingAcc ? "Sign Up" : "Login"}</button>
+
+                <button onClick={creatingAcc ? handleCreateAcc : handleEmailLogin}>{creatingAcc ? "Sign Up" : "Login"}</button>
 
                 <p style={{color: "var(--default-text)", fontSize: "16px", cursor: "default"}}>Or</p>
 

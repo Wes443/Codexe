@@ -119,6 +119,12 @@
     overflow-wrap: break-word;
 }
 
+.zen-mode span {
+  color: var(--default-text);
+  font-size: 32px;
+  font-family: inherit;
+}
+
 .bottom-bar{
   width: 100%;
   display: flex;
