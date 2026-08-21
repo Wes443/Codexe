@@ -31,11 +31,13 @@ button {
     gap: 10px;
 }
 button:focus{
-    border: 2px solid white;
+    background-color: var(--hover-text);
+    color: var(--accent-1);
 }
 
 button:hover{
-    border: 2px solid white;
+    background-color: var(--hover-text);
+    color: var(--accent-1);
 }
 
 .toggle {
@@ -45,7 +47,7 @@ button:hover{
 }
 
 .toggle p {
-    color: var(--hover-text);
+    color: var(--default-text);
     font-size: 16px;
 }
 
@@ -55,7 +57,7 @@ button:hover{
 }
 
 .click-text:hover {
-    color: var(--default-text);
+    color: var(--hover-text);
 }
 
 .error {

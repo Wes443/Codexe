@@ -5,6 +5,7 @@ import HomeButton from "../components/HomeButton";
 import AccountBar from "../components/AccountBar";
 import TypingNavbar from "../components/TypingNavbar";
 import TypingText from "../components/TypingText";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
     const { user, userDoc, loading } = useAuth();
@@ -13,6 +14,8 @@ function Dashboard() {
     const [ language, setLanguage ] = useState("Python");
     const [ zen, setZen ] = useState(false);
     const [ userUid, setUserUid ] = useState("");
+
+    const navigate = useNavigate();
 
     //check if the user is signed in or a guest
     useEffect(() => {

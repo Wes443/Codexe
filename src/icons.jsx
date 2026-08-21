@@ -9,6 +9,8 @@ import ClockSvg from "./assets/clock-icon.svg?react";
 import RestartSvg from "./assets/restart-icon.svg?react";
 import NextSvg from "./assets/next-icon.svg?react";
 import LockSvg from "./assets/lock-icon.svg?react";
+import MailSvg from "./assets/mail-icon.svg?react";
+import GoogleSvg from "./assets/google-logo.svg?react";
 
 export function LogoIcon(props) {
     return <LogoSvg {...props} />;
@@ -52,4 +54,12 @@ export function NextIcon(props) {
 
 export function LockIcon(props){
     return <LockSvg {...props} />
+}
+
+export function MailIcon(props){
+    return <MailSvg {...props} />
+}
+
+export function GoogleLogo(props){
+    return <GoogleSvg {...props} />
 }

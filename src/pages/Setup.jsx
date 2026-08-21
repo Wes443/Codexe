@@ -48,6 +48,8 @@ function Setup() {
         }
     }
 
+    if(loading || userDoc) return;
+
     return(
         <div className={styles["window"]}>
             <HomeButton />
